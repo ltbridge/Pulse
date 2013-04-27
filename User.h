@@ -1,19 +1,21 @@
 #pragma once
+
+using namespace System;
 public ref class User
 {
 public:
 	User();
-	User(System::String^ fName, System::String^ lName, int docId, System::String^ t);
-	void AssignData(System::String^ fName, System::String^ lName, int docId, System::String^ t);
+	User(String^ fName, String^ lName, int docId, String^ t);
+	void AssignData(String^ fName, String^ lName, int docId, String^ t);
 	virtual ~User(void);
-	System::String^ getfirstName();
-	System::String^ getlastName();
+	String^ getfirstName();
+	String^ getlastName();
 	int getdoctorId();
-	System::String^ gettype();
+	String^ gettype();
 private:
-	System::String^ firstName;
-	System::String^ lastName;
+	String^ firstName;
+	String^ lastName;
 	int doctorId;
-	System::String^ type;
+	String^ type;
 };
 
