@@ -1,4 +1,5 @@
 #pragma once
+#include"stdafx.h"
 
 namespace Pulse {
 
@@ -80,13 +81,13 @@ namespace Pulse {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->Time = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Name = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
+			this->Del = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
-			this->Time = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Name = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
-			this->Del = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -154,6 +155,28 @@ namespace Pulse {
 			this->dataGridView1->TabIndex = 5;
 			this->dataGridView1->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &ApptMainView::dataGridView1_CellContentClick);
 			// 
+			// Time
+			// 
+			this->Time->HeaderText = L"Time";
+			this->Time->Name = L"Time";
+			this->Time->ReadOnly = true;
+			this->Time->Width = 175;
+			// 
+			// Name
+			// 
+			this->Name->HeaderText = L"Name";
+			this->Name->Name = L"Name";
+			this->Name->Resizable = System::Windows::Forms::DataGridViewTriState::True;
+			this->Name->Width = 250;
+			// 
+			// Del
+			// 
+			this->Del->HeaderText = L"Del";
+			this->Del->Name = L"Del";
+			this->Del->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->Del->Text = L"X";
+			this->Del->Width = 30;
+			// 
 			// button1
 			// 
 			this->button1->Location = System::Drawing::Point(65, 284);
@@ -190,34 +213,11 @@ namespace Pulse {
 			this->button4->Text = L"Next";
 			this->button4->UseVisualStyleBackColor = true;
 			// 
-			// Time
-			// 
-			this->Time->HeaderText = L"Time";
-			this->Time->Name = L"Time";
-			this->Time->ReadOnly = true;
-			this->Time->Width = 175;
-			// 
-			// Name
-			// 
-			this->Name->HeaderText = L"Name";
-			this->Name->Name = L"Name";
-			this->Name->Resizable = System::Windows::Forms::DataGridViewTriState::True;
-			this->Name->Width = 250;
-			// 
-			// Del
-			// 
-			this->Del->HeaderText = L"Del";
-			this->Del->Name = L"Del";
-			this->Del->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			this->Del->Text = L"X";
-			this->Del->Width = 30;
-			// 
 			// ApptMainView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(616, 335);
-			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
@@ -228,8 +228,10 @@ namespace Pulse {
 			this->Controls->Add(this->linkLabel1);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			//this->Name = L"ApptMainView";
+			this->Name = L"ApptMainView";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"ApptMainView";
+			this->Load += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -240,5 +242,7 @@ namespace Pulse {
 			 }
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 			 }
+private: System::Void ApptMainView_Load(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }

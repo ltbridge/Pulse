@@ -2,8 +2,6 @@
 #include "stdafx.h"
 #include "UserData.h"
 #include "ApptMainView.h"
-#include <string>
-#include <iostream>
 
 namespace Pulse {
 

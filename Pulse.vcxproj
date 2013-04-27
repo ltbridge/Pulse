@@ -91,6 +91,8 @@
     <ClCompile Include="DBase.cpp" />
     <ClCompile Include="LoginView.cpp" />
     <ClCompile Include="Patient.cpp" />
+    <ClCompile Include="PatientMainView.cpp" />
+    <ClCompile Include="PresEditAddView.cpp" />
     <ClCompile Include="Pulse.cpp" />
     <ClCompile Include="SessionData.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -109,6 +111,12 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Patient.h" />
+    <ClInclude Include="PatientMainView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="PresEditAddView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="PulseMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -127,6 +135,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoginView.resx">
       <DependentUpon>LoginView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientMainView.resx">
+      <DependentUpon>PatientMainView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresEditAddView.resx">
+      <DependentUpon>PresEditAddView.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PulseMain.resX">
       <DependentUpon>PulseMain.h</DependentUpon>
