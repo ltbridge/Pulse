@@ -79,6 +79,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +87,9 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdminMainView.cpp" />
+    <ClCompile Include="AdminUserListView.cpp" />
+    <ClCompile Include="AdminUserView.cpp" />
     <ClCompile Include="ApptData.cpp" />
     <ClCompile Include="ApptMainView.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -93,7 +97,10 @@
     <ClCompile Include="DBase.cpp" />
     <ClCompile Include="LoginView.cpp" />
     <ClCompile Include="Patient.cpp" />
+    <ClCompile Include="PatientAddView.cpp" />
+    <ClCompile Include="PatientGraphView.cpp" />
     <ClCompile Include="PatientMainView.cpp" />
+    <ClCompile Include="PatientSearchView.cpp" />
     <ClCompile Include="PresData.cpp" />
     <ClCompile Include="PresEditAddView.cpp" />
     <ClCompile Include="PtntData.cpp" />
@@ -108,6 +115,15 @@
     <ClCompile Include="UserData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdminMainView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="AdminUserListView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="AdminUserView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="ApptData.h" />
     <ClInclude Include="ApptMainView.h">
       <FileType>CppForm</FileType>
@@ -118,7 +134,16 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Patient.h" />
+    <ClInclude Include="PatientAddView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="PatientGraphView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="PatientMainView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="PatientSearchView.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="PresData.h" />
@@ -140,14 +165,26 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AdminMainView.resx">
+      <DependentUpon>AdminMainView.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ApptMainView.resx">
       <DependentUpon>ApptMainView.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginView.resx">
       <DependentUpon>LoginView.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PatientAddView.resx">
+      <DependentUpon>PatientAddView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientGraphView.resx">
+      <DependentUpon>PatientGraphView.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientMainView.resx">
       <DependentUpon>PatientMainView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientSearchView.resx">
+      <DependentUpon>PatientSearchView.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PresEditAddView.resx">
       <DependentUpon>PresEditAddView.h</DependentUpon>

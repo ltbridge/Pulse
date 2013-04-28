@@ -75,6 +75,13 @@ namespace Pulse {
 			LoginView ^ login = gcnew LoginView(session);
 			login->Owner = this;
 		}
+
+	public:
+		System::Void logout() {
+			session = gcnew SessionData();
+			LoginView ^ login = gcnew LoginView(session);
+			login->Owner = this;
+		}
 		
 	};
 }

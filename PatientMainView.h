@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "PresEditAddView.h"
 #include "SessionData.h"
-//#include "Graph.h"
+#include "PatientGraphView.h"
 
 using namespace std;
 using namespace System;
@@ -26,6 +26,7 @@ namespace Pulse {
 		{
 			session = s;
 			InitializeComponent();
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
 			this->Show();
 			//
@@ -65,10 +66,10 @@ namespace Pulse {
 
 
 
-	private: System::Windows::Forms::RichTextBox^  richTextBox1;
-	private: System::Windows::Forms::DateTimePicker^  dateTimePicker1;
 
-	private: System::Windows::Forms::Button^  button2;
+
+
+
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::TextBox^  textBox9;
@@ -117,6 +118,15 @@ namespace Pulse {
 		/// </summary>
 		System::ComponentModel::Container ^components;
 	private: System::Windows::Forms::TabPage^  tabPage4;
+	private: System::Windows::Forms::RichTextBox^  commentList;
+	private: System::Windows::Forms::DateTimePicker^  dateTimePicker;
+	private: System::Windows::Forms::Button^  add_btn;
+	private: System::Windows::Forms::RichTextBox^  newComment;
+private: System::Windows::Forms::LinkLabel^  linkLabel6;
+private: System::Windows::Forms::Label^  label22;
+private: System::Windows::Forms::Label^  label23;
+private: System::Windows::Forms::TextBox^  textBox13;
+private: System::Windows::Forms::Label^  label24;
 	private:
 		SessionData ^ session;
 
@@ -138,7 +148,6 @@ namespace Pulse {
 			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->label8 = (gcnew System::Windows::Forms::Label());
@@ -175,8 +184,15 @@ namespace Pulse {
 			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
-			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
-			this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
+			this->commentList = (gcnew System::Windows::Forms::RichTextBox());
+			this->dateTimePicker = (gcnew System::Windows::Forms::DateTimePicker());
+			this->add_btn = (gcnew System::Windows::Forms::Button());
+			this->newComment = (gcnew System::Windows::Forms::RichTextBox());
+			this->linkLabel6 = (gcnew System::Windows::Forms::LinkLabel());
+			this->label22 = (gcnew System::Windows::Forms::Label());
+			this->label23 = (gcnew System::Windows::Forms::Label());
+			this->label24 = (gcnew System::Windows::Forms::Label());
+			this->textBox13 = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
@@ -192,10 +208,10 @@ namespace Pulse {
 			this->tabControl1->Controls->Add(this->tabPage4);
 			this->tabControl1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->tabControl1->Location = System::Drawing::Point(1, 1);
+			this->tabControl1->Location = System::Drawing::Point(9, 24);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(547, 373);
+			this->tabControl1->Size = System::Drawing::Size(548, 388);
 			this->tabControl1->TabIndex = 12;
 			// 
 			// tabPage1
@@ -209,7 +225,6 @@ namespace Pulse {
 			this->tabPage1->Controls->Add(this->textBox8);
 			this->tabPage1->Controls->Add(this->textBox9);
 			this->tabPage1->Controls->Add(this->textBox1);
-			this->tabPage1->Controls->Add(this->button2);
 			this->tabPage1->Controls->Add(this->button1);
 			this->tabPage1->Controls->Add(this->label9);
 			this->tabPage1->Controls->Add(this->label8);
@@ -223,7 +238,7 @@ namespace Pulse {
 			this->tabPage1->Location = System::Drawing::Point(4, 25);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(539, 344);
+			this->tabPage1->Size = System::Drawing::Size(540, 359);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Info";
 			this->tabPage1->UseVisualStyleBackColor = true;
@@ -317,18 +332,6 @@ namespace Pulse {
 			this->textBox1->Size = System::Drawing::Size(100, 20);
 			this->textBox1->TabIndex = 1;
 			this->textBox1->Text = L"Sally";
-			// 
-			// button2
-			// 
-			this->button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->button2->Location = System::Drawing::Point(283, 314);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 11;
-			this->button2->Text = L"Go Back";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &PatientMainView::button2_Click);
 			// 
 			// button1
 			// 
@@ -443,6 +446,8 @@ namespace Pulse {
 			// 
 			// tabPage2
 			// 
+			this->tabPage2->Controls->Add(this->textBox13);
+			this->tabPage2->Controls->Add(this->label24);
 			this->tabPage2->Controls->Add(this->button3);
 			this->tabPage2->Controls->Add(this->button4);
 			this->tabPage2->Controls->Add(this->label21);
@@ -459,14 +464,14 @@ namespace Pulse {
 			this->tabPage2->Location = System::Drawing::Point(4, 25);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(539, 344);
+			this->tabPage2->Size = System::Drawing::Size(540, 359);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Stats";
 			this->tabPage2->UseVisualStyleBackColor = true;
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(354, 225);
+			this->button3->Location = System::Drawing::Point(327, 236);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 24;
@@ -487,7 +492,7 @@ namespace Pulse {
 			// label21
 			// 
 			this->label21->AutoSize = true;
-			this->label21->Location = System::Drawing::Point(7, 3);
+			this->label21->Location = System::Drawing::Point(75, 64);
 			this->label21->Name = L"label21";
 			this->label21->Size = System::Drawing::Size(46, 17);
 			this->label21->TabIndex = 22;
@@ -507,7 +512,7 @@ namespace Pulse {
 			this->label15->AutoSize = true;
 			this->label15->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label15->Location = System::Drawing::Point(451, 175);
+			this->label15->Location = System::Drawing::Point(421, 196);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(43, 13);
 			this->label15->TabIndex = 20;
@@ -518,18 +523,18 @@ namespace Pulse {
 			this->label16->AutoSize = true;
 			this->label16->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label16->Location = System::Drawing::Point(448, 91);
+			this->label16->Location = System::Drawing::Point(265, 115);
 			this->label16->Name = L"label16";
-			this->label16->Size = System::Drawing::Size(88, 13);
+			this->label16->Size = System::Drawing::Size(43, 13);
 			this->label16->TabIndex = 19;
-			this->label16->Text = L"Systolic/Diastolic";
+			this->label16->Text = L"Systolic";
 			// 
 			// label17
 			// 
 			this->label17->AutoSize = true;
 			this->label17->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label17->Location = System::Drawing::Point(448, 20);
+			this->label17->Location = System::Drawing::Point(421, 44);
 			this->label17->Name = L"label17";
 			this->label17->Size = System::Drawing::Size(20, 13);
 			this->label17->TabIndex = 18;
@@ -539,7 +544,7 @@ namespace Pulse {
 			// 
 			this->textBox10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->textBox10->Location = System::Drawing::Point(329, 169);
+			this->textBox10->Location = System::Drawing::Point(315, 193);
 			this->textBox10->Name = L"textBox10";
 			this->textBox10->Size = System::Drawing::Size(100, 20);
 			this->textBox10->TabIndex = 17;
@@ -548,7 +553,7 @@ namespace Pulse {
 			// 
 			this->textBox11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->textBox11->Location = System::Drawing::Point(329, 88);
+			this->textBox11->Location = System::Drawing::Point(315, 106);
 			this->textBox11->Name = L"textBox11";
 			this->textBox11->Size = System::Drawing::Size(100, 20);
 			this->textBox11->TabIndex = 16;
@@ -557,7 +562,7 @@ namespace Pulse {
 			// 
 			this->textBox12->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->textBox12->Location = System::Drawing::Point(329, 20);
+			this->textBox12->Location = System::Drawing::Point(315, 44);
 			this->textBox12->Name = L"textBox12";
 			this->textBox12->Size = System::Drawing::Size(100, 20);
 			this->textBox12->TabIndex = 15;
@@ -567,7 +572,7 @@ namespace Pulse {
 			this->label18->AutoSize = true;
 			this->label18->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label18->Location = System::Drawing::Point(244, 169);
+			this->label18->Location = System::Drawing::Point(324, 173);
 			this->label18->Name = L"label18";
 			this->label18->Size = System::Drawing::Size(67, 13);
 			this->label18->TabIndex = 14;
@@ -578,7 +583,7 @@ namespace Pulse {
 			this->label19->AutoSize = true;
 			this->label19->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label19->Location = System::Drawing::Point(244, 95);
+			this->label19->Location = System::Drawing::Point(324, 90);
 			this->label19->Name = L"label19";
 			this->label19->Size = System::Drawing::Size(81, 13);
 			this->label19->TabIndex = 13;
@@ -589,7 +594,7 @@ namespace Pulse {
 			this->label20->AutoSize = true;
 			this->label20->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label20->Location = System::Drawing::Point(244, 20);
+			this->label20->Location = System::Drawing::Point(337, 23);
 			this->label20->Name = L"label20";
 			this->label20->Size = System::Drawing::Size(44, 13);
 			this->label20->TabIndex = 12;
@@ -609,7 +614,7 @@ namespace Pulse {
 			this->tabPage3->Controls->Add(this->label14);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
 			this->tabPage3->Name = L"tabPage3";
-			this->tabPage3->Size = System::Drawing::Size(539, 344);
+			this->tabPage3->Size = System::Drawing::Size(540, 359);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Prescriptions";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -712,39 +717,115 @@ namespace Pulse {
 			// 
 			// tabPage4
 			// 
-			this->tabPage4->Controls->Add(this->richTextBox1);
-			this->tabPage4->Controls->Add(this->dateTimePicker1);
+			this->tabPage4->Controls->Add(this->commentList);
+			this->tabPage4->Controls->Add(this->dateTimePicker);
+			this->tabPage4->Controls->Add(this->add_btn);
+			this->tabPage4->Controls->Add(this->newComment);
 			this->tabPage4->Location = System::Drawing::Point(4, 25);
 			this->tabPage4->Name = L"tabPage4";
-			this->tabPage4->Size = System::Drawing::Size(539, 344);
+			this->tabPage4->Size = System::Drawing::Size(540, 359);
 			this->tabPage4->TabIndex = 3;
 			this->tabPage4->Text = L"Comments";
 			this->tabPage4->UseVisualStyleBackColor = true;
 			// 
-			// richTextBox1
+			// commentList
 			// 
-			this->richTextBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->commentList->BackColor = System::Drawing::Color::White;
+			this->commentList->Location = System::Drawing::Point(7, 43);
+			this->commentList->Name = L"commentList";
+			this->commentList->ReadOnly = true;
+			this->commentList->ScrollBars = System::Windows::Forms::RichTextBoxScrollBars::ForcedVertical;
+			this->commentList->Size = System::Drawing::Size(314, 291);
+			this->commentList->TabIndex = 8;
+			this->commentList->Text = L"";
+			// 
+			// dateTimePicker
+			// 
+			this->dateTimePicker->CustomFormat = L"MMMM dd , yyyy";
+			this->dateTimePicker->Format = System::Windows::Forms::DateTimePickerFormat::Custom;
+			this->dateTimePicker->Location = System::Drawing::Point(183, 14);
+			this->dateTimePicker->Name = L"dateTimePicker";
+			this->dateTimePicker->Size = System::Drawing::Size(170, 23);
+			this->dateTimePicker->TabIndex = 7;
+			// 
+			// add_btn
+			// 
+			this->add_btn->Location = System::Drawing::Point(389, 275);
+			this->add_btn->Name = L"add_btn";
+			this->add_btn->Size = System::Drawing::Size(81, 23);
+			this->add_btn->TabIndex = 6;
+			this->add_btn->Text = L"Add Comment";
+			this->add_btn->UseVisualStyleBackColor = true;
+			// 
+			// newComment
+			// 
+			this->newComment->Location = System::Drawing::Point(327, 43);
+			this->newComment->Name = L"newComment";
+			this->newComment->ScrollBars = System::Windows::Forms::RichTextBoxScrollBars::Vertical;
+			this->newComment->Size = System::Drawing::Size(200, 226);
+			this->newComment->TabIndex = 5;
+			this->newComment->Text = L"Enter a new comment here";
+			// 
+			// linkLabel6
+			// 
+			this->linkLabel6->AutoSize = true;
+			this->linkLabel6->Location = System::Drawing::Point(517, 9);
+			this->linkLabel6->Name = L"linkLabel6";
+			this->linkLabel6->Size = System::Drawing::Size(40, 13);
+			this->linkLabel6->TabIndex = 15;
+			this->linkLabel6->TabStop = true;
+			this->linkLabel6->Text = L"Logout";
+			this->linkLabel6->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &PatientMainView::linkLabel6_LinkClicked);
+			// 
+			// label22
+			// 
+			this->label22->AutoSize = true;
+			this->label22->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->richTextBox1->Location = System::Drawing::Point(93, 61);
-			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(323, 225);
-			this->richTextBox1->TabIndex = 1;
-			this->richTextBox1->Text = L"";
+			this->label22->ForeColor = System::Drawing::Color::Maroon;
+			this->label22->Location = System::Drawing::Point(70, 8);
+			this->label22->Name = L"label22";
+			this->label22->Size = System::Drawing::Size(103, 13);
+			this->label22->TabIndex = 14;
+			this->label22->Text = L"Name Goes Here";
 			// 
-			// dateTimePicker1
+			// label23
 			// 
-			this->dateTimePicker1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->label23->AutoSize = true;
+			this->label23->Location = System::Drawing::Point(6, 8);
+			this->label23->Name = L"label23";
+			this->label23->Size = System::Drawing::Size(58, 13);
+			this->label23->TabIndex = 13;
+			this->label23->Text = L"Welcome, ";
+			// 
+			// label24
+			// 
+			this->label24->AutoSize = true;
+			this->label24->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->dateTimePicker1->Location = System::Drawing::Point(151, 21);
-			this->dateTimePicker1->Name = L"dateTimePicker1";
-			this->dateTimePicker1->Size = System::Drawing::Size(200, 20);
-			this->dateTimePicker1->TabIndex = 0;
+			this->label24->Location = System::Drawing::Point(267, 135);
+			this->label24->Name = L"label24";
+			this->label24->Size = System::Drawing::Size(42, 13);
+			this->label24->TabIndex = 25;
+			this->label24->Text = L"Diatolic";
+			// 
+			// textBox13
+			// 
+			this->textBox13->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->textBox13->Location = System::Drawing::Point(315, 132);
+			this->textBox13->Name = L"textBox13";
+			this->textBox13->Size = System::Drawing::Size(100, 20);
+			this->textBox13->TabIndex = 26;
 			// 
 			// PatientMainView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(544, 372);
+			this->ClientSize = System::Drawing::Size(569, 424);
+			this->Controls->Add(this->linkLabel6);
+			this->Controls->Add(this->label22);
+			this->Controls->Add(this->label23);
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"PatientMainView";
 			this->Text = L"Patient Information";
@@ -758,6 +839,7 @@ namespace Pulse {
 			this->tabPage3->PerformLayout();
 			this->tabPage4->ResumeLayout(false);
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -778,7 +860,7 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) 
 		 {
 			 PresEditAddView ^ newPres = gcnew PresEditAddView(session);
-			 //newPres->ShowDialog();
+			 newPres->Owner = this->Owner;
 			 
 			 
 		 }
@@ -794,9 +876,8 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 		 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 //Graph ^ newGraph = gcnew Graph;
-			 //newGraph->ShowDialog();
-			 //Pull the information from database for the selected date and put them in the text boxes
+			 PatientGraphView ^ newGraph = gcnew PatientGraphView(session);
+			 newGraph->Owner = this->Owner;
 		 }
 private: System::Void PatientMainView_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
@@ -805,6 +886,12 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 if(session->getcurrentUser()->gettype() == "Patient"){
 				NoEdit();
 				tabControl1->TabPages->Remove(tabPage4);
+				this->ControlBox = false;
+				this->label22->Text = session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
+			 } else {
+				 this->label22->Visible = false;
+				 this->label23->Visible = false;
+				 this->linkLabel6->Visible = false;
 			 }
 			 PopulateFields(session->getcurrentPatient());
 		 }
@@ -831,6 +918,11 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 this->textBox7->Text = patient->getEmail();
 			 this->textBox8->Text = patient->getInsurance();
 			 this->textBox9->Text = patient->getPolicyNum();
+		 }
+
+private: System::Void linkLabel6_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
+			this->Owner->Show();
+			this->Close();
 		 }
 };
 }

@@ -3,6 +3,7 @@
 #include "UserData.h"
 #include "ApptMainView.h"
 #include "PatientMainView.h"
+#include "AdminMainView.h"
 #include "PtntData.h"
 
 namespace Pulse {
@@ -104,7 +105,6 @@ namespace Pulse {
 			this->username_tb->Name = L"username_tb";
 			this->username_tb->Size = System::Drawing::Size(177, 20);
 			this->username_tb->TabIndex = 13;
-			this->username_tb->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &LoginView::username_tb_KeyDown);
 			// 
 			// pw_tb
 			// 
@@ -165,6 +165,7 @@ namespace Pulse {
 			this->Text = L"Access Pulse";
 			this->Load += gcnew System::EventHandler(this, &LoginView::LoginView_Load);
 			this->ResumeLayout(false);
+			this->ControlBox = false;
 			this->PerformLayout();
 
 		}
@@ -181,8 +182,6 @@ namespace Pulse {
 		System::Void pw_tb_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			if (e->KeyCode == Keys::Enter)
 				submitLogin();
-		 }
-		System::Void username_tb_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		 }
 		System::Void FpwLink_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 
@@ -214,16 +213,22 @@ namespace Pulse {
 			session->setcurrentUser(tempUser);
 		}
 		System::Void RedirectMain(){
+			this->pw_tb->Text = "";
+			this->username_tb->Text = "";
+			
 			String^ type = session->getcurrentUser()->gettype();
+			
 			if(type == "Admin"){
-				this->login_message->Text = "Admin Screen Still in Development.";
+				AdminMainView ^ admin = gcnew AdminMainView(session);
+				admin->Owner = this;
+				this->Hide();
 			} else if (type == "Doctor" || type == "Nurse"){
 				ApptMainView ^ appt = gcnew ApptMainView(session);
-				appt->Owner = this->Owner;
+				appt->Owner = this;
 				this->Hide();
 			} else if (type == "Patient"){
 				PatientMainView ^ ptntView = gcnew PatientMainView(session);
-				ptntView->Owner = this->Owner;
+				ptntView->Owner = this;
 				this->Hide();
 			} else {
 				this->login_message->Text = "Report to System Admin regarding Access.";

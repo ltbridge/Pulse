@@ -1,5 +1,7 @@
 #pragma once
 #include"stdafx.h"
+#include "PatientAddView.h"
+#include "PatientSearchView.h"
 
 namespace Pulse {
 
@@ -122,6 +124,7 @@ namespace Pulse {
 			this->linkLabel1->TabIndex = 2;
 			this->linkLabel1->TabStop = true;
 			this->linkLabel1->Text = L"Logout";
+			this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &ApptMainView::linkLabel1_LinkClicked);
 			// 
 			// label3
 			// 
@@ -204,6 +207,7 @@ namespace Pulse {
 			this->button3->TabIndex = 8;
 			this->button3->Text = L"Patient Search";
 			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &ApptMainView::button3_Click);
 			// 
 			// button4
 			// 
@@ -235,6 +239,7 @@ namespace Pulse {
 			this->Load += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
+			this->ControlBox = false;
 			this->PerformLayout();
 
 		}
@@ -248,6 +253,16 @@ namespace Pulse {
 				 this->label2->Text = name;
 			 }
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
+				 PatientAddView ^ addP = gcnew PatientAddView(session);
+				 addP->Owner = this->Owner;
+			 }
+	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
+				 PatientSearchView ^ searchP = gcnew PatientSearchView(session);
+				 searchP->Owner = this->Owner;
+			}
+	private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
+				this->Owner->Show();
+				this->Close();
 			 }
 };
 }
