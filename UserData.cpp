@@ -39,7 +39,7 @@ User^ UserData::get(System::String^ userN, System::String^ passW){
 	query(querystring);
 
 	System::String^ type;
-	int typeNum = (int)myReader[5];
+	int typeNum = (int)myReader["user_type"];
 	switch(typeNum){
 		case 1: 
 			type = "Admin";
@@ -58,7 +58,8 @@ User^ UserData::get(System::String^ userN, System::String^ passW){
 	System::String^ fName = (System::String^)myReader["user_firstName"];
 	System::String^ lName = (System::String^)myReader["user_lastName"];
 	int doc_id = (int)myReader["user_doc_id"];
-	User^ returnUser = gcnew User(fName, lName, doc_id, type);
+	int user_id = (int)myReader["user_id"];
+	User^ returnUser = gcnew User(fName, lName, doc_id, type, user_id);
 	closeConnection();
 	return returnUser;
 }

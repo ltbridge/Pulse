@@ -6,6 +6,7 @@ public ref class Patient
 {
 
 public:
+	Patient();
 	Patient(int newID, String ^ first, String ^ last, String ^ newAddress,
 		String ^ newCity, String ^ newState, int zip, String^ newEmail, String ^newInsur, String ^ newPolicy);
 	virtual ~Patient(void);

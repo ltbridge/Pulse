@@ -1,10 +1,11 @@
 #pragma once
-
+#include "stdafx.h"
 #include "Patient.h"
 
+Patient::Patient(){}
 
-Patient::Patient(int newID, String ^ first, String ^ last, String ^ newAddress, 
-	String ^ newCity, String ^ newState, int zip, String^ newEmail, String ^newInsur, String ^ newPolicy)
+Patient::Patient(int newID, String ^ first, String ^ last, String ^ newAddress,
+		String ^ newCity, String ^ newState, int zip, String^ newEmail, String ^newInsur, String ^ newPolicy)
 {
 	patientID = newID;
 	firstName = first;

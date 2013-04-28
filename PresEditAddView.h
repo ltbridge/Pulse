@@ -1,8 +1,9 @@
-#include "stdafx.h"
-#include "SessionData.h"
 #pragma once
 
-namespace PulseDatabase {
+#include "stdafx.h"
+#include "SessionData.h"
+
+namespace Pulse {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -134,7 +135,6 @@ namespace PulseDatabase {
 			this->label2->Size = System::Drawing::Size(35, 13);
 			this->label2->TabIndex = 4;
 			this->label2->Text = L"Name";
-			
 			// 
 			// label3
 			// 
@@ -144,7 +144,6 @@ namespace PulseDatabase {
 			this->label3->Size = System::Drawing::Size(32, 13);
 			this->label3->TabIndex = 5;
 			this->label3->Text = L"Dose";
-			
 			// 
 			// label4
 			// 
@@ -163,7 +162,6 @@ namespace PulseDatabase {
 			this->label5->Size = System::Drawing::Size(35, 13);
 			this->label5->TabIndex = 7;
 			this->label5->Text = L"Refills";
-			
 			// 
 			// label6
 			// 
@@ -257,7 +255,7 @@ namespace PulseDatabase {
 			this->save->UseVisualStyleBackColor = true;
 			this->save->Click += gcnew System::EventHandler(this, &PresEditAddView::save_Click);
 			// 
-			// Form1
+			// PresEditAddView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -279,8 +277,9 @@ namespace PulseDatabase {
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->comboBox3);
-			this->Name = L"Form1";
+			this->Name = L"PresEditAddView";
 			this->Text = L"Pulse";
+			this->Load += gcnew System::EventHandler(this, &PresEditAddView::PresEditAddView_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -321,6 +320,8 @@ private: System::Void save_Click(System::Object^  sender, System::EventArgs^  e)
 			pres5 = this->refills->Text;
 			pres6 = this->doctor->Text;
 			pres7 = this->comments->Text;
+		 }
+private: System::Void PresEditAddView_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 };
 }

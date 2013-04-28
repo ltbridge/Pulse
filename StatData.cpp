@@ -11,9 +11,9 @@ StatData::~StatData(void)
 {
 }
 
-void get(System::String^ type, System::String^ date, int patientID){
+void StatData::get(System::String^ type, System::DateTime date, int patientID){
 	//get data from database
 }
-void add(System::String^ type, System::String^ date, int patientID, System::DateTime date){
+void StatData::add(System::String^ type, int data, int patientID, System::DateTime date){
 	//save data to database
 }

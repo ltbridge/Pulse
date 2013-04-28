@@ -57,6 +57,21 @@
     <ClCompile Include="PresEditAddView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StatData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApptData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PresData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PtntData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -95,6 +110,21 @@
     <ClInclude Include="PresEditAddView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StatData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ApptData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PresData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PtntData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -106,6 +136,15 @@
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="PulseMain.resX">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ApptMainView.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientMainView.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresEditAddView.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

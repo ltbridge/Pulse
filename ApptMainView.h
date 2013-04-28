@@ -111,7 +111,7 @@ namespace Pulse {
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(103, 13);
 			this->label2->TabIndex = 1;
-			this->label2->Text = L""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
+			this->label2->Text = L"Name Goes Here";
 			// 
 			// linkLabel1
 			// 
@@ -194,6 +194,7 @@ namespace Pulse {
 			this->button2->TabIndex = 7;
 			this->button2->Text = L"Add Patient";
 			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &ApptMainView::button2_Click);
 			// 
 			// button3
 			// 
@@ -242,7 +243,11 @@ namespace Pulse {
 			 }
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 			 }
-private: System::Void ApptMainView_Load(System::Object^  sender, System::EventArgs^  e) {
-		 }
+	private: System::Void ApptMainView_Load(System::Object^  sender, System::EventArgs^  e) {
+				 String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
+				 this->label2->Text = name;
+			 }
+	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
+			 }
 };
 }

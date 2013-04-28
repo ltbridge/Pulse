@@ -1,4 +1,6 @@
 #pragma once
+#include "DBase.h"
+
 ref class PresData : public DBase
 {
 public:

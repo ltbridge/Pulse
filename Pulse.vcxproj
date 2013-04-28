@@ -86,15 +86,20 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ApptData.cpp" />
     <ClCompile Include="ApptMainView.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="CommData.cpp" />
     <ClCompile Include="DBase.cpp" />
     <ClCompile Include="LoginView.cpp" />
     <ClCompile Include="Patient.cpp" />
     <ClCompile Include="PatientMainView.cpp" />
+    <ClCompile Include="PresData.cpp" />
     <ClCompile Include="PresEditAddView.cpp" />
+    <ClCompile Include="PtntData.cpp" />
     <ClCompile Include="Pulse.cpp" />
     <ClCompile Include="SessionData.cpp" />
+    <ClCompile Include="StatData.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -103,9 +108,11 @@
     <ClCompile Include="UserData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ApptData.h" />
     <ClInclude Include="ApptMainView.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="CommData.h" />
     <ClInclude Include="DBase.h" />
     <ClInclude Include="LoginView.h">
       <FileType>CppForm</FileType>
@@ -114,14 +121,17 @@
     <ClInclude Include="PatientMainView.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="PresData.h" />
     <ClInclude Include="PresEditAddView.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="PtntData.h" />
     <ClInclude Include="PulseMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="SessionData.h" />
+    <ClInclude Include="StatData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserData.h" />

@@ -7,7 +7,7 @@
 using namespace std;
 using namespace System;
 
-namespace PulseDatabase {
+namespace Pulse {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -24,9 +24,10 @@ namespace PulseDatabase {
 	public:
 		PatientMainView(SessionData ^ s)
 		{
-			InitializeComponent();
-			this->Show();
 			session = s;
+			InitializeComponent();
+			CheckPermissions();
+			this->Show();
 			//
 			//TODO: Add the constructor code here
 			//
@@ -48,7 +49,7 @@ namespace PulseDatabase {
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
 	private: System::Windows::Forms::TabPage^  tabPage3;
-	private: System::Windows::Forms::TabPage^  tabPage4;
+
 	private: System::Windows::Forms::Label^  label9;
 	private: System::Windows::Forms::Label^  label8;
 	private: System::Windows::Forms::Label^  label7;
@@ -115,6 +116,7 @@ namespace PulseDatabase {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+	private: System::Windows::Forms::TabPage^  tabPage4;
 	private:
 		SessionData ^ session;
 
@@ -746,6 +748,7 @@ namespace PulseDatabase {
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"PatientMainView";
 			this->Text = L"Patient Information";
+			this->Load += gcnew System::EventHandler(this, &PatientMainView::PatientMainView_Load);
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
 			this->tabPage1->PerformLayout();
@@ -794,6 +797,40 @@ private: System::Void button4_Click(System::Object^  sender, System::EventArgs^ 
 			 //Graph ^ newGraph = gcnew Graph;
 			 //newGraph->ShowDialog();
 			 //Pull the information from database for the selected date and put them in the text boxes
+		 }
+private: System::Void PatientMainView_Load(System::Object^  sender, System::EventArgs^  e) {
+		 }
+
+		 System::Void CheckPermissions(){
+			 if(session->getcurrentUser()->gettype() == "Patient"){
+				NoEdit();
+				tabControl1->TabPages->Remove(tabPage4);
+			 }
+			 PopulateFields(session->getcurrentPatient());
+		 }
+
+		 System::Void NoEdit(){
+			this->textBox1->ReadOnly = true;
+			this->textBox2->ReadOnly = true;
+			this->textBox3->ReadOnly = true;
+			this->textBox4->ReadOnly = true;
+			this->textBox5->ReadOnly = true;
+			this->textBox6->ReadOnly = true;
+			this->textBox7->ReadOnly = true;
+			this->textBox8->ReadOnly = true;
+			this->textBox9->ReadOnly = true;
+		 }
+
+		 System::Void PopulateFields(Patient ^ patient){
+			 this->textBox1->Text = patient->getFirst();
+			 this->textBox2->Text = patient->getLast();
+			 this->textBox3->Text = patient->getAddress();
+			 this->textBox4->Text = patient->getCity();
+			 this->textBox5->Text = patient->getState();
+			 this->textBox6->Text = System::Convert::ToString(patient->getZipcode());
+			 this->textBox7->Text = patient->getEmail();
+			 this->textBox8->Text = patient->getInsurance();
+			 this->textBox9->Text = patient->getPolicyNum();
 		 }
 };
 }

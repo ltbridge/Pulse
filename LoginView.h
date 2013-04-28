@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "UserData.h"
 #include "ApptMainView.h"
+#include "PatientMainView.h"
+#include "PtntData.h"
 
 namespace Pulse {
 
@@ -26,6 +28,7 @@ namespace Pulse {
 			//TODO: Add the constructor code here
 			//
 			UserDB = gcnew UserData();
+			PtntDB = gcnew PtntData();
 			this->Show();
 			session = s;
 		}
@@ -51,6 +54,7 @@ namespace Pulse {
 	private: System::Windows::Forms::Label^  login_message;
 	private: System::Windows::Forms::LinkLabel^  FpwLink;
 	private: UserData^ UserDB;
+			 PtntData^ PtntDB;
 			 SessionData^ session;
 
 
@@ -189,11 +193,20 @@ namespace Pulse {
 		System::Void submitLogin(){
 			this->login_message->Visible = true;
 			if(UserDB->validLogin(username_tb->Text, pw_tb->Text)){
-					AssignUser(username_tb->Text, pw_tb->Text);
+					CreateSession(username_tb->Text, pw_tb->Text);
 					RedirectMain();
 			} else {
 					this->login_message->Text = "Invalid username or password.";
 			}
+		}
+		System::Void CreateSession(System::String^ userN, System::String^ passW){
+			AssignUser(userN, passW);
+			if(session->getcurrentUser()->gettype() == "Patient")
+				AssignPatient();
+		}
+
+		System::Void AssignPatient(){
+			session->setcurrentPatient(PtntDB->get(session->getcurrentUser()->getuserId(), true));
 		}
 
 		System::Void AssignUser(System::String^ userN, System::String^ passW){
@@ -207,9 +220,11 @@ namespace Pulse {
 			} else if (type == "Doctor" || type == "Nurse"){
 				ApptMainView ^ appt = gcnew ApptMainView(session);
 				appt->Owner = this->Owner;
-				this->Close();
+				this->Hide();
 			} else if (type == "Patient"){
-			
+				PatientMainView ^ ptntView = gcnew PatientMainView(session);
+				ptntView->Owner = this->Owner;
+				this->Hide();
 			} else {
 				this->login_message->Text = "Report to System Admin regarding Access.";
 			}

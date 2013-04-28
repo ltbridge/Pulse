@@ -1,6 +1,8 @@
 #pragma once
-ref class PtntData :
-public DBase
+#include "DBase.h"
+#include "Patient.h"
+
+ref class PtntData :public DBase
 {
 public:
 	PtntData(void);

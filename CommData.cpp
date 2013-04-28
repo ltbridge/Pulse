@@ -17,10 +17,10 @@ void CommData::get(System::DateTime date, int ptnt_ID)
 
 bool CommData::add(System::DateTime date, int ptnt_ID, System::String ^ enteredString)
 {
-	bool result = false;
+	return false;
 }
 
-bool CommData::remove(Comm_ID)
+bool CommData::remove(int comm_ID)
 {
-	bool result = false;
+	return false;
 }
