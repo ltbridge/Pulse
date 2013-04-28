@@ -111,7 +111,7 @@ namespace Pulse {
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(103, 13);
 			this->label2->TabIndex = 1;
-			this->label2->Text = L"Name Goes Here";
+			this->label2->Text = L""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 			// 
 			// linkLabel1
 			// 
@@ -228,7 +228,7 @@ namespace Pulse {
 			this->Controls->Add(this->linkLabel1);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			this->Name = L"ApptMainView";
+			//this->Name = L"ApptMainView";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"ApptMainView";
 			this->Load += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Load);

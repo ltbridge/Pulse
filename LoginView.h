@@ -129,9 +129,8 @@ namespace Pulse {
 			this->login_message->ForeColor = System::Drawing::Color::Red;
 			this->login_message->Location = System::Drawing::Point(23, 75);
 			this->login_message->Name = L"login_message";
-			this->login_message->Size = System::Drawing::Size(219, 13);
+			this->login_message->Size = System::Drawing::Size(0, 13);
 			this->login_message->TabIndex = 17;
-			this->login_message->Text = L"";
 			this->login_message->Visible = false;
 			// 
 			// FpwLink
