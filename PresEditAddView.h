@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include "SessionData.h"
 #pragma once
 
 namespace PulseDatabase {
@@ -20,12 +20,14 @@ namespace PulseDatabase {
 	public ref class PresEditAddView : public System::Windows::Forms::Form
 	{
 	public:
-		PresEditAddView(void)
+		PresEditAddView(SessionData ^ s)
 		{
 			InitializeComponent();
+			this->Show();
 			//
 			//TODO: Add the constructor code here
 			//
+			session = s;
 		}
 
 	protected:
@@ -77,6 +79,8 @@ namespace PulseDatabase {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+	private:
+		SessionData ^ session;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>

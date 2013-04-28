@@ -1,7 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #include "PresEditAddView.h"
-#include "Graph.h"
+#include "SessionData.h"
+//#include "Graph.h"
 
 using namespace std;
 using namespace System;
@@ -16,14 +17,16 @@ namespace PulseDatabase {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for DoctorPatient
+	/// Summary for PatientMainView
 	/// </summary>
 	public ref class PatientMainView : public System::Windows::Forms::Form
 	{
 	public:
-		PatientMainView(void)
+		PatientMainView(SessionData ^ s)
 		{
 			InitializeComponent();
+			this->Show();
+			session = s;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -112,6 +115,8 @@ namespace PulseDatabase {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+	private:
+		SessionData ^ session;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -321,7 +326,7 @@ namespace PulseDatabase {
 			this->button2->TabIndex = 11;
 			this->button2->Text = L"Go Back";
 			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &DoctorPatient::button2_Click);
+			this->button2->Click += gcnew System::EventHandler(this, &PatientMainView::button2_Click);
 			// 
 			// button1
 			// 
@@ -333,7 +338,7 @@ namespace PulseDatabase {
 			this->button1->TabIndex = 10;
 			this->button1->Text = L"Save";
 			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &DoctorPatient::button1_Click);
+			this->button1->Click += gcnew System::EventHandler(this, &PatientMainView::button1_Click);
 			// 
 			// label9
 			// 
@@ -465,7 +470,7 @@ namespace PulseDatabase {
 			this->button3->TabIndex = 24;
 			this->button3->Text = L"Add Data";
 			this->button3->UseVisualStyleBackColor = true;
-			this->button3->Click += gcnew System::EventHandler(this, &DoctorPatient::button3_Click);
+			this->button3->Click += gcnew System::EventHandler(this, &PatientMainView::button3_Click);
 			// 
 			// button4
 			// 
@@ -475,7 +480,7 @@ namespace PulseDatabase {
 			this->button4->TabIndex = 23;
 			this->button4->Text = L"View Graph";
 			this->button4->UseVisualStyleBackColor = true;
-			this->button4->Click += gcnew System::EventHandler(this, &DoctorPatient::button4_Click);
+			this->button4->Click += gcnew System::EventHandler(this, &PatientMainView::button4_Click);
 			// 
 			// label21
 			// 
@@ -494,7 +499,6 @@ namespace PulseDatabase {
 			this->dateTimePicker2->Name = L"dateTimePicker2";
 			this->dateTimePicker2->Size = System::Drawing::Size(200, 20);
 			this->dateTimePicker2->TabIndex = 21;
-			
 			// 
 			// label15
 			// 
@@ -613,51 +617,51 @@ namespace PulseDatabase {
 			this->linkLabel5->AutoSize = true;
 			this->linkLabel5->Location = System::Drawing::Point(155, 238);
 			this->linkLabel5->Name = L"linkLabel5";
-			this->linkLabel5->Size = System::Drawing::Size(72, 17);
+			this->linkLabel5->Size = System::Drawing::Size(112, 17);
 			this->linkLabel5->TabIndex = 14;
 			this->linkLabel5->TabStop = true;
-			this->linkLabel5->Text = L"linkLabel5";
+			this->linkLabel5->Text = L"Add Prescription";
 			// 
 			// linkLabel4
 			// 
 			this->linkLabel4->AutoSize = true;
 			this->linkLabel4->Location = System::Drawing::Point(155, 187);
 			this->linkLabel4->Name = L"linkLabel4";
-			this->linkLabel4->Size = System::Drawing::Size(72, 17);
+			this->linkLabel4->Size = System::Drawing::Size(112, 17);
 			this->linkLabel4->TabIndex = 13;
 			this->linkLabel4->TabStop = true;
-			this->linkLabel4->Text = L"linkLabel4";
+			this->linkLabel4->Text = L"Add Prescription";
 			// 
 			// linkLabel3
 			// 
 			this->linkLabel3->AutoSize = true;
 			this->linkLabel3->Location = System::Drawing::Point(155, 130);
 			this->linkLabel3->Name = L"linkLabel3";
-			this->linkLabel3->Size = System::Drawing::Size(72, 17);
+			this->linkLabel3->Size = System::Drawing::Size(112, 17);
 			this->linkLabel3->TabIndex = 12;
 			this->linkLabel3->TabStop = true;
-			this->linkLabel3->Text = L"linkLabel3";
+			this->linkLabel3->Text = L"Add Prescription";
 			// 
 			// linkLabel2
 			// 
 			this->linkLabel2->AutoSize = true;
 			this->linkLabel2->Location = System::Drawing::Point(155, 74);
 			this->linkLabel2->Name = L"linkLabel2";
-			this->linkLabel2->Size = System::Drawing::Size(72, 17);
+			this->linkLabel2->Size = System::Drawing::Size(112, 17);
 			this->linkLabel2->TabIndex = 11;
 			this->linkLabel2->TabStop = true;
-			this->linkLabel2->Text = L"linkLabel2";
+			this->linkLabel2->Text = L"Add Prescription";
 			// 
 			// linkLabel1
 			// 
 			this->linkLabel1->AutoSize = true;
 			this->linkLabel1->Location = System::Drawing::Point(155, 25);
 			this->linkLabel1->Name = L"linkLabel1";
-			this->linkLabel1->Size = System::Drawing::Size(72, 17);
+			this->linkLabel1->Size = System::Drawing::Size(112, 17);
 			this->linkLabel1->TabIndex = 10;
 			this->linkLabel1->TabStop = true;
-			this->linkLabel1->Text = L"linkLabel1";
-			this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &DoctorPatient::linkLabel1_LinkClicked);
+			this->linkLabel1->Text = L"Add Prescription";
+			this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &PatientMainView::linkLabel1_LinkClicked);
 			// 
 			// label10
 			// 
@@ -734,7 +738,7 @@ namespace PulseDatabase {
 			this->dateTimePicker1->Size = System::Drawing::Size(200, 20);
 			this->dateTimePicker1->TabIndex = 0;
 			// 
-			// DoctorPatient
+			// PatientMainView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -759,111 +763,38 @@ namespace PulseDatabase {
 
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 //string a;
+
 			 
-			 string string1;
-			 string string2;
-			 string string3;
-			 string string4;
-			 string string5;
-			 string string6;
-			 string string7;
-			 string string8;
-			 string string9;
-
-			 String ^ temp = textBox1->Text;
-			 MarshalString(temp, string1);
-
-			 temp = textBox2->Text;
-			 MarshalString(temp, string2);
-
-			 temp = textBox3->Text;
-			 MarshalString(temp, string3);
-
-			 temp = textBox4->Text;
-			 MarshalString(temp, string4);
-
-			 temp = textBox5->Text;
-			 MarshalString(temp, string5);
-
-			 temp = textBox6->Text;
-			 MarshalString(temp, string6);
-
-			 temp = textBox7->Text;
-			 MarshalString(temp, string7);
-
-			 temp = textBox8->Text;
-			 MarshalString(temp, string8);
-
-			 temp = textBox9->Text;
-			 MarshalString(temp, string9);
-
-			 cout<<string1<<endl;
-			 cout<<string2<<endl;
-			 cout<<string3<<endl;
-			 cout<<string4<<endl;
-			 cout<<string5<<endl;
-			 cout<<string6<<endl;
-			 cout<<string7<<endl;
-			 cout<<string8<<endl;
-			 cout<<string9<<endl;
-
-
-			 //String ^ temp2 = "meow";
-			// textBox2->Text = temp2;
-			// MarshalString(temp, a); //converts String ^ to string
-			 //cout<<a;
-			 
-			 
-			/* bool meow = String::IsNullOrEmpty(temp);
-			 int size = temp->Length;
-			 if(meow == true)
-			 {
-				 label2->Text = "true";
-			 }
-			 else
-			 {
-				 String ^temp2 = temp->ToLower();
-				 label1->Text = temp2;
-			 }
-			 Console::WriteLine("meow");
-			 */
 		 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 Testingscreen ^ newScreen = gcnew Testingscreen;
-			 newScreen->ShowDialog();
-			 //DoctorPatient::Hide();
+			 //Testingscreen ^ newScreen = gcnew Testingscreen;
+			 //newScreen->ShowDialog();
+			 //PatientMainView::Hide();
 		 }
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) 
 		 {
-			 PresEditAddView ^ newPres = gcnew PresEditAddView;
-			 newPres->ShowDialog();
+			 PresEditAddView ^ newPres = gcnew PresEditAddView(session);
+			 //newPres->ShowDialog();
 			 
 			 
 		 }
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 string weight, bp, sl;
 			 String ^ temp = textBox1->Text; 
-			 MarshalString(temp, weight); 
 			 temp = textBox2->Text; 
-			 MarshalString(temp, bp);
 			 temp = textBox3->Text; 
-			 MarshalString(temp, sl); 
-			 String ^ tempdate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");
-			 string date;
-			 MarshalString(tempdate, date);
-			 cout<<date<<endl;
+			 String ^ tempdate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");;
+
 			 //Save everything from the entered fields, into the database for the date specified
 
 		 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 Graph ^ newGraph = gcnew Graph;
-			 newGraph->ShowDialog();
+			 //Graph ^ newGraph = gcnew Graph;
+			 //newGraph->ShowDialog();
 			 //Pull the information from database for the selected date and put them in the text boxes
 		 }
 };
 }
-#endif
+//#endif
