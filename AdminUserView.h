@@ -1,5 +1,7 @@
 #pragma once
 #include "SessionData.h"
+#include "UserData.h"
+#include "User.h"
 
 namespace Pulse {
 
@@ -15,11 +17,27 @@ namespace Pulse {
 	/// </summary>
 	public ref class AdminUserView : public System::Windows::Forms::Form
 	{
+	private: UserData^ UserDB; User^ user;
+			 array<String^>^ authority;
+			 array<String^>^ docs; 
+	private: System::Windows::Forms::Label^  label8;
 	public:
-		AdminUserView(SessionData ^ s)
+		AdminUserView(User^ u)
 		{
-			session=s;
+			user = u;
+			UserDB = gcnew UserData();
 			InitializeComponent();
+			comboBox2List();
+			authority = gcnew array<String^>(4);
+			authority[0] = "Admin";
+			authority[1] = "Doctor";
+			authority[2] = "Nurse";
+			authority[3] = "Patient";
+			if(user == nullptr){
+				this->label7->Text = "Add User";
+			} else {
+				PopulateFields();
+			}
 			this->Show();
 		}
 
@@ -77,6 +95,7 @@ namespace Pulse {
 			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->label8 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// label4
@@ -100,11 +119,12 @@ namespace Pulse {
 			// comboBox1
 			// 
 			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(4) {L"Patient", L"Doctor", L"Nurse", L"Admin"});
+			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(4) {L"Admin", L"Doctor", L"Nurse", L"Patient"});
 			this->comboBox1->Location = System::Drawing::Point(103, 98);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(100, 21);
 			this->comboBox1->TabIndex = 7;
+			this->comboBox1->SelectedIndex = 3;
 			// 
 			// textBox1
 			// 
@@ -191,7 +211,7 @@ namespace Pulse {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(76, 216);
+			this->button1->Location = System::Drawing::Point(72, 244);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 20;
@@ -199,11 +219,23 @@ namespace Pulse {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &AdminUserView::button1_Click);
 			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->ForeColor = System::Drawing::Color::Red;
+			this->label8->Location = System::Drawing::Point(57, 218);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(107, 13);
+			this->label8->TabIndex = 21;
+			this->label8->Visible = false;
+			this->label8->Text = L"All Fields are required";
+			// 
 			// AdminUserView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(224, 250);
+			this->ClientSize = System::Drawing::Size(224, 279);
+			this->Controls->Add(this->label8);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->comboBox2);
@@ -227,8 +259,83 @@ namespace Pulse {
 		}
 #pragma endregion
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			 //Function to store added user information to database
-			 AdminUserView::Hide();
+			 String^ name = textBox1->Text ; 
+			 String^ password = textBox2->Text;
+			 String^ fname = textBox4->Text;
+			 String^ lname = textBox3->Text;
+			 int atype = 1+comboBox1->SelectedIndex;
+			 if(user == nullptr && UserDB->nameExists(name)){
+				 label8->Text = "UserName already exists.";
+				 label8->Visible = true;
+			 }else if(name == "" || password == "" || fname == "" || lname == "" || comboBox1->SelectedIndex < 0 || comboBox2->SelectedIndex < 0){
+				label8->Visible = true;
+				label8->Text = "All Fields are required";
+			 }else{
+				 int docid;
+				 if(comboBox2->SelectedIndex > 0){
+					User ^ doc = UserDB->get(docs[comboBox2->SelectedIndex], true);
+					 docid= doc->getuserId();
+				 } else {
+					 docid = 0;
+				 }
+				 int forgot = 0;
+				 if(user == nullptr){
+					UserDB->add(name, password, docid, forgot, atype, fname, lname);
+					this->Close();
+				 } else {
+					 UserDB->update(user->getuserId(), name, password, docid, forgot, atype, fname, lname);
+					 this->Close();
+				 }
+			 }
+			
+			 
+		 }
+
+		 System::Void comboBox2List(){
+			 
+			 UserDB->userList(2);
+			 this->docs = gcnew array<String^>(250);
+			 comboBox2->Items->Add("None");
+			 docs[0] = "None";
+			 bool dataLeft = true;
+			 int i = 1;
+			 if(UserDB->myReader->HasRows){
+					while(dataLeft){
+					comboBox2->Items->Add((String^)(UserDB->myReader["user_firstName"])+" "+(String^)(UserDB->myReader["user_lastName"]));
+					docs[i] = (String^)(UserDB->myReader["user_firstName"])+" "+(String^)(UserDB->myReader["user_lastName"]);
+					i++;
+					if(!UserDB->myReader->Read())
+						dataLeft = false;
+					}
+					
+				}
+			 UserDB->closeConnection();
+			 this->comboBox2->SelectedIndex = 0;
+			 this->comboBox1->SelectedIndex = 0;
+
+		 }
+
+		 System::Void PopulateFields(){
+			 textBox1->Text = user->getuserName();
+			 textBox2->Text = user->getpassword();
+			 textBox3->Text = user->getlastName();
+			 textBox4->Text = user->getfirstName();
+			 for(int i = 0; i < 4; i++){
+				if(user->gettype() == authority[i])
+					comboBox1->SelectedIndex = i;
+			 }
+			 comboBox1->SelectedText = user->gettype();
+			 if(user->getdoctorId()){
+				User^ doc = UserDB->get(user->getdoctorId());
+				int j = 0;
+				while(docs[j] != nullptr){
+					if((doc->getfirstName()+" "+ doc->getlastName()) == docs[j])
+						comboBox2->SelectedIndex = j;
+					j++;
+				}
+			 } else {
+				 comboBox2->SelectedIndex = 0;
+			 }
 		 }
 };
 }

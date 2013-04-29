@@ -38,12 +38,47 @@ Patient^ PtntData::get(int id, bool user)
 	return temp;
 }
 
-bool PtntData::add(Patient^ newPatient)
+Patient ^ PtntData::add(Patient^ newPatient, int userID, int docID)
 {
-	return false;
+	String^ querystring = "Insert into Patients Values(";
+	querystring += "" + userID +", ";
+	querystring += "" + docID +", ";
+	querystring += "'" + newPatient->getFirst() +"', ";
+	querystring += "'" + newPatient->getLast() +"', ";
+	querystring += "'" + newPatient->getAddress() +"', ";
+	querystring += "'" + newPatient->getCity() +"', ";
+	querystring += "'" + newPatient->getState() +"', ";
+	querystring += "" + newPatient->getZipcode() +", ";
+	querystring += "'" + newPatient->getPhone() +"', ";
+	querystring += "'" + newPatient->getEmail() +"', ";
+	querystring += "'" + newPatient->getInsurance() +"', ";
+	querystring += "'" + newPatient->getPolicyNum() +"')";
+	query(querystring);
+	closeConnection();
+	return this->get(userID, true);
 }
 
-void PtntData::search(String^ firstName, String^ lastName, String^ phoneNum, int id){
+bool PtntData::update(int ptnt_id, String ^ first, String ^ last, String ^ newAddress,
+		String ^ newCity, String ^ newState, int zip, String ^ newphone, String^ newEmail, String ^newInsur, String ^ newPolicy)
+{
+	String^ querystring = "Update Patients Set ";
+	querystring += "ptnt_firstName='" + first +"', ";
+	querystring += "ptnt_lastName='" + last +"', ";
+	querystring += "ptnt_address='" + newAddress +"', ";
+	querystring += "ptnt_city='" + newCity +"', ";
+	querystring += "ptnt_state='" + newState +"', ";
+	querystring += "ptnt_zipcode=" + zip +", ";
+	querystring += "ptnt_phone='" + newphone +"', ";
+	querystring += "ptnt_email='" + newEmail +"', ";
+	querystring += "ptnt_insurance='" + newInsur +"', ";
+	querystring += "ptnt_policyNum='" + newPolicy +"' ";
+	querystring += "where ptnt_id=" + ptnt_id +"";
+	query(querystring);
+	closeConnection();
+	return true;
+}
+
+void PtntData::search(String^ firstName, String^ lastName, String^ phoneNum, int id, int docid){
 	String^ querystring = "Select * from Patients where ";
 	bool orSetter = false;
 	if(firstName != ""){
@@ -61,6 +96,9 @@ void PtntData::search(String^ firstName, String^ lastName, String^ phoneNum, int
 	if(id != 0){
 		querystring += (orSetter? " OR ": "")+"ptnt_id LIKE '%"+id+"%'";
 		orSetter = true;
+	}
+	if(docid != 0){
+		querystring += (orSetter? " AND ": "")+"ptnt_doc_id="+docid;
 	}
 	query(querystring);
 }

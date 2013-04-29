@@ -1,6 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "PtntData.h"
+#include "ApptData.h"
+#include "Patient.h"
+#include "PatientMainView.h"
 
 namespace Pulse {
 
@@ -17,7 +20,10 @@ namespace Pulse {
 	public ref class PatientSearchView : public System::Windows::Forms::Form
 	{
 
-	private: PtntData ^ ptntDB; SessionData^ session;
+	private: PtntData ^ ptntDB; SessionData^ session; DateTime ^ date; ApptData ^ apptDB;
+
+	private: System::Windows::Forms::Label^  label8;
+
 	public:
 		PatientSearchView(SessionData ^ s)
 		{
@@ -26,8 +32,23 @@ namespace Pulse {
 			//TODO: Add the constructor code here
 			//
 			ptntDB = gcnew PtntData();
+			apptDB = gcnew ApptData();
 			this->Show();
 			session = s;
+		}
+
+		PatientSearchView(SessionData ^ s, DateTime ^ d)
+		{
+			
+			InitializeComponent();
+			//
+			//TODO: Add the constructor code here
+			//
+			date = d;
+			session = s;
+			ptntDB = gcnew PtntData();
+			apptDB = gcnew ApptData();
+			this->Show();
 
 		}
 
@@ -59,12 +80,8 @@ namespace Pulse {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  FirstName;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  LastName;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Phone;
-
-
-
-
-
-
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Type;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  DateTime;
 
 	private:
 		/// <summary>
@@ -96,6 +113,9 @@ namespace Pulse {
 			this->FirstName = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->LastName = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Phone = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Type = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->DateTime = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->label8 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
@@ -202,7 +222,7 @@ namespace Pulse {
 			// groupBox1
 			// 
 			this->groupBox1->Controls->Add(this->dataGridView1);
-			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox1->Location = System::Drawing::Point(12, 157);
 			this->groupBox1->Name = L"groupBox1";
@@ -213,20 +233,24 @@ namespace Pulse {
 			// 
 			// dataGridView1
 			// 
+			this->dataGridView1->AllowUserToAddRows = false;
+			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {this->ID, this->FirstName, 
-				this->LastName, this->Phone});
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->ID, this->FirstName, 
+				this->LastName, this->Phone, this->Type, this->DateTime});
 			this->dataGridView1->Location = System::Drawing::Point(3, 29);
 			this->dataGridView1->Name = L"dataGridView1";
+			this->dataGridView1->ReadOnly = true;
 			this->dataGridView1->Size = System::Drawing::Size(514, 182);
 			this->dataGridView1->TabIndex = 0;
-			this->dataGridView1->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &PatientSearchView::dataGridView1_CellContentClick);
+			this->dataGridView1->CellClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &PatientSearchView::dataGridView1_CellClick);
 			// 
 			// ID
 			// 
 			this->ID->HeaderText = L"ID";
 			this->ID->Name = L"ID";
 			this->ID->ReadOnly = true;
+			this->ID->Width = 50;
 			// 
 			// FirstName
 			// 
@@ -247,12 +271,41 @@ namespace Pulse {
 			this->Phone->HeaderText = L"Phone #";
 			this->Phone->Name = L"Phone";
 			this->Phone->ReadOnly = true;
+			this->Phone->Width = 150;
+			// 
+			// Type
+			// 
+			this->Type->HeaderText = L"Type";
+			this->Type->Name = L"Type";
+			this->Type->ReadOnly = true;
+			this->Type->Visible = false;
+			// 
+			// DateTime
+			// 
+			this->DateTime->HeaderText = L"DateTime";
+			this->DateTime->Name = L"DateTime";
+			this->DateTime->ReadOnly = true;
+			this->DateTime->Visible = false;
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label8->ForeColor = System::Drawing::Color::Red;
+			this->label8->Location = System::Drawing::Point(148, 141);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(258, 13);
+			this->label8->TabIndex = 9;
+			this->label8->Text = L"Unable to add appointment, please try again";
+			this->label8->Visible = false;
 			// 
 			// PatientSearchView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(544, 372);
+			this->Controls->Add(this->label8);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->searchButton);
 			this->Controls->Add(this->textBox4);
@@ -277,6 +330,7 @@ namespace Pulse {
 
 private: System::Void searchButton_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
+			 this->label8->Visible = false;
 			 String ^ first = "", ^ last = "", ^ phone = "";
 			 int id = 0;;
 
@@ -288,14 +342,28 @@ private: System::Void searchButton_Click(System::Object^  sender, System::EventA
 				 phone = (String ^)(this->textBox3->Text);
 			 if(this->textBox4->Text != "")
 				 id = Convert::ToInt32(this->textBox4->Text);
-			 ptntDB->search(first, last, phone, id);
+			 ptntDB->search(first, last, phone, id, this->session->getcurrentUser()->getdoctorId());
 			 fillResult();
 		 }
 private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
-private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+			String ^ check = this->dataGridView1[4,e->RowIndex]->Value->ToString();
+			if(check == "appt"){
+				if(apptDB->add(date, this->session->getcurrentUser()->getdoctorId(), Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value))){
+					this->Close();
+				}else
+					this->label8->Visible = true;
+			} else {
+				Patient ^ patient = ptntDB->get(Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value), false);
+				PatientMainView ^ pMain = gcnew PatientMainView(session, patient);
+				pMain->Owner = this->Owner;
+			}
+		 
 		 }
 private: System::Void fillResult() {
+			 this->dataGridView1->Rows->Clear();
+
 			 bool dataLeft;
 			 if(ptntDB->myReader->HasRows)
 				 dataLeft = true;
@@ -304,7 +372,9 @@ private: System::Void fillResult() {
 				String ^ first = (String ^)(ptntDB->myReader["ptnt_firstName"]);
 				String ^ last = (String ^)(ptntDB->myReader["ptnt_lastName"]);
 				String ^ phone = (String ^)(ptntDB->myReader["ptnt_phone"]);
-				this->dataGridView1->Rows->Add(id, first, last, phone);
+				String ^ type = this->date == nullptr ? "view" : "appt";
+				String ^ datetime = this->date == nullptr ? "" : this->date->ToString();
+				this->dataGridView1->Rows->Add(id, first, last, phone, type, datetime);
 				if(!ptntDB->myReader->Read())
 					dataLeft = false;
 			 }

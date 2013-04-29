@@ -1,5 +1,7 @@
 #pragma once
 #include "stdafx.h"
+#include "Patient.h"
+#include "StatData.h"
 
 namespace Pulse {
 
@@ -16,12 +18,13 @@ namespace Pulse {
 	public ref class PatientGraphView : public System::Windows::Forms::Form
 	{
 
-		private: SessionData^ session;
+		private: SessionData^ session; Patient ^ patient;
 
 		public:
-			PatientGraphView(SessionData ^ s)
+			PatientGraphView(SessionData ^ s, Patient ^ p)
 			{
 				session = s;
+				patient = p;
 				InitializeComponent();
 				this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 				this->Show();

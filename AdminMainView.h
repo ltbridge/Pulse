@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "AdminUserView.h"
 #include "AdminUserListView.h"
+#include "UserData.h"
+#include "User.h"
 
 namespace Pulse {
 
@@ -17,13 +19,14 @@ namespace Pulse {
 	/// </summary>
 	public ref class AdminMainView : public System::Windows::Forms::Form
 	{
-	private: SessionData ^ session;
+	private: SessionData ^ session; UserData ^ UserDB;
 	public:
 		AdminMainView(SessionData ^ s)
 		{
+			UserDB = gcnew UserData();
 			session=s;
 			InitializeComponent();
-
+			populateList();
 			String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 			this->label1->Text = name;
 			this->ControlBox = false;
@@ -97,6 +100,7 @@ namespace Pulse {
 			this->listBox1->Name = L"listBox1";
 			this->listBox1->Size = System::Drawing::Size(109, 108);
 			this->listBox1->TabIndex = 3;
+			this->listBox1->Click += gcnew System::EventHandler(this, &AdminMainView::listBox1_SelectedIndexChanged);
 			// 
 			// addButton
 			// 
@@ -183,13 +187,9 @@ namespace Pulse {
 #pragma endregion
 
 private: System::Void addButton_Click(System::Object^  sender, System::EventArgs^  e) {
-				//If username already exists in password
-					//this->message->Text=L"Username already exists";
-					//this->message->Visible=true;
-				//else
-				//{
-					AdminUserView ^ adminAddScreen = gcnew AdminUserView(session);
-				//}
+			User ^ user;
+			AdminUserView ^ adminAddScreen = gcnew AdminUserView(user);
+			adminAddScreen->Owner = this;
 
 		 }
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
@@ -197,13 +197,33 @@ private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Wi
 			this->Close();
 		 }
 private: System::Void removeButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if (listBox1->SelectedIndex!=-1)
+			 if (listBox1->SelectedIndex!=-1){
+				 UserDB->removeforgotPass(listBox1->SelectedItem->ToString());
 				 listBox1->Items->RemoveAt(listBox1->SelectedIndex);
+			 }
 		 }
 
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			AdminUserListView ^ adminViewScreen = gcnew AdminUserListView(session);
 
+		 }
+		 System::Void populateList(){
+			 listBox1->Items->Clear();
+			 UserDB->forgotPassList();
+			 bool dataLeft = true;
+			 if(UserDB->myReader->HasRows){
+				 while(dataLeft){
+					listBox1->Items->Add(UserDB->myReader["user_name"]);
+					if(!UserDB->myReader->Read())
+						dataLeft = false;
+				 }
+			 }
+			 UserDB->closeConnection();
+		 }
+private: System::Void listBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			 User ^ user = UserDB->get(listBox1->SelectedItem->ToString(), false);
+			 AdminUserView ^ adminAddScreen = gcnew AdminUserView(user);
+			 adminAddScreen->Owner = this;
 		 }
 };
 }

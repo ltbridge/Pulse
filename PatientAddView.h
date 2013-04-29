@@ -1,6 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "PtntData.h"
+#include "Patient.h"
+#include "UserData.h"
+#include "PatientMainView.h"
 
 using namespace std;
 using namespace System;
@@ -20,7 +23,9 @@ namespace Pulse {
 	/// </summary>
 	public ref class PatientAddView : public System::Windows::Forms::Form
 	{
-
+		private: PtntData^ PtntDB; SessionData^ session;
+	private: System::Windows::Forms::Label^  label18;
+			 UserData^ UserDB;
 		public:
 			PatientAddView(SessionData^ s)
 			{
@@ -29,6 +34,7 @@ namespace Pulse {
 				//TODO: Add the constructor code here
 				//
 				PtntDB = gcnew PtntData();
+				UserDB = gcnew UserData();
 				this->Show();
 				session = s;
 			}
@@ -53,29 +59,17 @@ namespace Pulse {
 		private: System::Windows::Forms::Label^  label7;
 		private: System::Windows::Forms::TextBox^  firstBox;
 		private: System::Windows::Forms::TextBox^  stateBox;
-
-
 		private: System::Windows::Forms::TextBox^  cityBox;
-
 		private: System::Windows::Forms::TextBox^  addressBox;
-
 		private: System::Windows::Forms::TextBox^  lastBox;
 		private: System::Windows::Forms::TextBox^  zipBox;
-
-
 		private: System::Windows::Forms::Label^  label8;
 		private: System::Windows::Forms::TextBox^  insuranceBox;
-
 		private: System::Windows::Forms::Label^  label9;
 		private: System::Windows::Forms::TextBox^  policyBox;
-
 		private: System::Windows::Forms::Label^  label10;
 		private: System::Windows::Forms::TextBox^  emailBox;
-
 		private: System::Windows::Forms::Button^  button1;
-
-
-		private: PtntData^ PtntDB; SessionData^ session;
 		private: System::Windows::Forms::Label^  label11;
 		private: System::Windows::Forms::TextBox^  textBox1;
 		private: System::Windows::Forms::Label^  label12;
@@ -84,8 +78,9 @@ namespace Pulse {
 		private: System::Windows::Forms::Label^  label13;
 		private: System::Windows::Forms::Label^  label14;
 		private: System::Windows::Forms::Label^  label15;
-	private: System::Windows::Forms::TextBox^  textBox4;
-	private: System::Windows::Forms::Label^  label16;
+		private: System::Windows::Forms::TextBox^  textBox4;
+		private: System::Windows::Forms::Label^  label16;
+		private: System::Windows::Forms::Label^  label17;
 
 		protected: 
 
@@ -132,6 +127,8 @@ namespace Pulse {
 			this->label15 = (gcnew System::Windows::Forms::Label());
 			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
 			this->label16 = (gcnew System::Windows::Forms::Label());
+			this->label17 = (gcnew System::Windows::Forms::Label());
+			this->label18 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// label1
@@ -316,6 +313,7 @@ namespace Pulse {
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(147, 20);
 			this->textBox1->TabIndex = 19;
+			this->textBox1->TextChanged += gcnew System::EventHandler(this, &PatientAddView::textBox1_TextChanged);
 			// 
 			// label12
 			// 
@@ -332,6 +330,7 @@ namespace Pulse {
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(147, 20);
 			this->textBox2->TabIndex = 21;
+			this->textBox2->TextChanged += gcnew System::EventHandler(this, &PatientAddView::textBox2_TextChanged);
 			// 
 			// textBox3
 			// 
@@ -339,6 +338,7 @@ namespace Pulse {
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(147, 20);
 			this->textBox3->TabIndex = 22;
+			this->textBox3->TextChanged += gcnew System::EventHandler(this, &PatientAddView::textBox3_TextChanged);
 			// 
 			// label13
 			// 
@@ -354,7 +354,7 @@ namespace Pulse {
 			this->label14->AutoSize = true;
 			this->label14->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label14->Location = System::Drawing::Point(44, 29);
+			this->label14->Location = System::Drawing::Point(54, 18);
 			this->label14->Name = L"label14";
 			this->label14->Size = System::Drawing::Size(213, 26);
 			this->label14->TabIndex = 24;
@@ -365,7 +365,7 @@ namespace Pulse {
 			this->label15->AutoSize = true;
 			this->label15->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label15->Location = System::Drawing::Point(357, 29);
+			this->label15->Location = System::Drawing::Point(357, 18);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(152, 26);
 			this->label15->TabIndex = 25;
@@ -387,11 +387,35 @@ namespace Pulse {
 			this->label16->TabIndex = 27;
 			this->label16->Text = L"Phone";
 			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->ForeColor = System::Drawing::Color::Red;
+			this->label17->Location = System::Drawing::Point(396, 149);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(120, 13);
+			this->label17->TabIndex = 28;
+			this->label17->Text = L"Passwords do no match";
+			this->label17->Visible = false;
+			// 
+			// label18
+			// 
+			this->label18->AutoSize = true;
+			this->label18->ForeColor = System::Drawing::Color::Red;
+			this->label18->Location = System::Drawing::Point(396, 49);
+			this->label18->Name = L"label18";
+			this->label18->Size = System::Drawing::Size(121, 13);
+			this->label18->TabIndex = 29;
+			this->label18->Text = L"Username already exists";
+			this->label18->Visible = false;
+			// 
 			// PatientAddView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(544, 372);
+			this->Controls->Add(this->label18);
+			this->Controls->Add(this->label17);
 			this->Controls->Add(this->textBox4);
 			this->Controls->Add(this->label16);
 			this->Controls->Add(this->label15);
@@ -437,11 +461,21 @@ namespace Pulse {
 			}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
-				/*String ^ temp = firstBox->Text;
-				int i = int::Parse(temp);
-				i++;
-				cout<<i;*/
-		
+				if(this->textBox2->Text != this->textBox3->Text){
+					this->label17->Visible = true;
+				} else if (UserDB->nameExists(this->textBox1->Text)){
+					this->label18->Visible = true;
+				} else {
+					User ^ user = UserDB->add(this->firstBox->Text, this->lastBox->Text, session->getcurrentUser()->getdoctorId(), 
+												"Patient", this->textBox1->Text, this->textBox2->Text);
+					Patient ^ patient = gcnew Patient(-1, this->firstBox->Text, this->lastBox->Text, this->addressBox->Text,
+														this->cityBox->Text, this->stateBox->Text, Convert::ToInt32(this->zipBox->Text), 
+														this->textBox4->Text, this->emailBox->Text, this->insuranceBox->Text, this->policyBox->Text);
+					patient = PtntDB->add(patient, user->getuserId(), session->getcurrentUser()->getdoctorId());
+					PatientMainView ^ pMain = gcnew PatientMainView(session, patient);
+					pMain->Owner = this->Owner;
+					this->Close();
+				}
 			 }
 
 
@@ -449,6 +483,15 @@ namespace Pulse {
 			 {
 				 Close(); //or hide
 			 }
+	private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				this->label17->Visible = false;
+			 }
+	private: System::Void textBox3_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				this->label17->Visible = false;
+			 }
+	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				this->label18->Visible = false;
+			}
 };
 }
 

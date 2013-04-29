@@ -168,6 +168,12 @@
     <EmbeddedResource Include="AdminMainView.resx">
       <DependentUpon>AdminMainView.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminUserListView.resx">
+      <DependentUpon>AdminUserListView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminUserView.resx">
+      <DependentUpon>AdminUserView.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ApptMainView.resx">
       <DependentUpon>ApptMainView.h</DependentUpon>
     </EmbeddedResource>

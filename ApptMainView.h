@@ -70,6 +70,7 @@ namespace Pulse {
 	private: System::Windows::Forms::DataGridViewButtonColumn^  Name;
 	private: System::Windows::Forms::DataGridViewButtonColumn^  Del;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  PatientID;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  appt_id;
 
 
 
@@ -101,11 +102,12 @@ namespace Pulse {
 			this->Time = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Name = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
 			this->Del = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
+			this->PatientID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->appt_id = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
-			this->PatientID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -157,20 +159,23 @@ namespace Pulse {
 			// 
 			this->dateTimePicker1->CustomFormat = L"MMMMdd, yyyy";
 			this->dateTimePicker1->Format = System::Windows::Forms::DateTimePickerFormat::Custom;
-			this->dateTimePicker1->Location = System::Drawing::Point(65, 84);
+			this->dateTimePicker1->Location = System::Drawing::Point(75, 86);
 			this->dateTimePicker1->Name = L"dateTimePicker1";
 			this->dateTimePicker1->Size = System::Drawing::Size(134, 20);
 			this->dateTimePicker1->TabIndex = 4;
+			this->dateTimePicker1->ValueChanged += gcnew System::EventHandler(this, &ApptMainView::dateTimePicker1_ValueChanged);
 			// 
 			// dataGridView1
 			// 
+			this->dataGridView1->AllowUserToAddRows = false;
 			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {this->Time, this->Name, 
-				this->Del, this->PatientID});
-			this->dataGridView1->Location = System::Drawing::Point(65, 110);
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(5) {this->Time, this->Name, 
+				this->Del, this->PatientID, this->appt_id});
+			this->dataGridView1->Location = System::Drawing::Point(75, 112);
 			this->dataGridView1->Name = L"dataGridView1";
-			this->dataGridView1->Size = System::Drawing::Size(500, 168);
+			this->dataGridView1->ReadOnly = true;
+			this->dataGridView1->Size = System::Drawing::Size(477, 249);
 			this->dataGridView1->TabIndex = 5;
 			this->dataGridView1->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &ApptMainView::dataGridView1_CellContentClick);
 			// 
@@ -184,6 +189,7 @@ namespace Pulse {
 			// 
 			this->Name->HeaderText = L"Name";
 			this->Name->Name = L"Name";
+			this->Name->ReadOnly = true;
 			this->Name->Resizable = System::Windows::Forms::DataGridViewTriState::True;
 			this->Name->Width = 300;
 			// 
@@ -191,22 +197,38 @@ namespace Pulse {
 			// 
 			this->Del->HeaderText = L"Del";
 			this->Del->Name = L"Del";
+			this->Del->ReadOnly = true;
 			this->Del->Resizable = System::Windows::Forms::DataGridViewTriState::False;
 			this->Del->Text = L"X";
 			this->Del->Width = 30;
 			// 
+			// PatientID
+			// 
+			this->PatientID->HeaderText = L"PatientID";
+			this->PatientID->Name = L"PatientID";
+			this->PatientID->ReadOnly = true;
+			this->PatientID->Visible = false;
+			// 
+			// appt_id
+			// 
+			this->appt_id->HeaderText = L"appt_id";
+			this->appt_id->Name = L"appt_id";
+			this->appt_id->ReadOnly = true;
+			this->appt_id->Visible = false;
+			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(65, 284);
+			this->button1->Location = System::Drawing::Point(75, 367);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(66, 23);
 			this->button1->TabIndex = 6;
 			this->button1->Text = L"Prev";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &ApptMainView::button1_Click);
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(211, 283);
+			this->button2->Location = System::Drawing::Point(221, 367);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(109, 22);
 			this->button2->TabIndex = 7;
@@ -216,7 +238,7 @@ namespace Pulse {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(326, 283);
+			this->button3->Location = System::Drawing::Point(336, 367);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(110, 21);
 			this->button3->TabIndex = 8;
@@ -226,24 +248,19 @@ namespace Pulse {
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(498, 284);
+			this->button4->Location = System::Drawing::Point(485, 365);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(67, 23);
 			this->button4->TabIndex = 9;
 			this->button4->Text = L"Next";
 			this->button4->UseVisualStyleBackColor = true;
-			// 
-			// PatientID
-			// 
-			this->PatientID->HeaderText = L"PatientID";
-			this->PatientID->Name = L"PatientID";
-			this->PatientID->Visible = false;
+			this->button4->Click += gcnew System::EventHandler(this, &ApptMainView::button4_Click);
 			// 
 			// ApptMainView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(616, 335);
+			this->ClientSize = System::Drawing::Size(616, 412);
 			this->ControlBox = false;
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
@@ -258,6 +275,7 @@ namespace Pulse {
 			//this->Name = L"ApptMainView";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"ApptMainView";
+			this->Activated += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Activate);
 			this->Load += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
@@ -269,17 +287,24 @@ namespace Pulse {
 			 }
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 				
-				 String ^ check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
+				 String ^ check;
 				 if(e->ColumnIndex == 1){
-					if(check == "OPEN")
-						PatientSearchView ^ pSearch = gcnew PatientSearchView(session);
-					else{
+					check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
+					if(check == "OPEN"){
+						String ^ test = this->dataGridView1[0,e->RowIndex]->Value->ToString();
+						DateTime ^ openTime = gcnew DateTime;
+						openTime = DateTime::Parse(""+this->dateTimePicker1->Value.ToString("MM/dd/yyyy ")+""+this->dataGridView1[0,e->RowIndex]->Value->ToString()+"");
+						PatientSearchView ^ pSearch = gcnew PatientSearchView(session, openTime);
+					} else{
 						session->setcurrentPatient(ptntDB->get((int)(this->dataGridView1[3,e->RowIndex]->Value), false));
 						PatientMainView ^ pMain = gcnew PatientMainView(session);
 					}
 				} else if (e->ColumnIndex == 2) {
+					check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
 					if(check == "X"){
-						//delete appointment
+						int appt_id = Convert::ToInt32(this->dataGridView1[4,e->RowIndex]->Value);
+						apptDB->remove(appt_id);
+						pullAppointments(this->dateTimePicker1->Value);
 					}
 				}
 			 }
@@ -289,11 +314,11 @@ namespace Pulse {
 			 }
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 				 PatientAddView ^ addP = gcnew PatientAddView(session);
-				 addP->Owner = this->Owner;
+				 addP->Owner = this;
 			 }
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 				 PatientSearchView ^ searchP = gcnew PatientSearchView(session);
-				 searchP->Owner = this->Owner;
+				 searchP->Owner = this;
 			}
 	private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 				this->Owner->Show();
@@ -301,6 +326,7 @@ namespace Pulse {
 			 }
 
 			 System::Void pullAppointments(DateTime^ chosenDate){
+				 this->dataGridView1->Rows->Clear();
 				 apptDB->get(chosenDate, session->getcurrentUser()->getdoctorId());
 				 
 				 bool dataLeft;
@@ -316,17 +342,31 @@ namespace Pulse {
 					 if(rowDate->Hour == i){
 						String^ name = (String^)(apptDB->myReader["ptnt_firstName"])+" "+(String^)(apptDB->myReader["ptnt_lastName"]);
 						int ptnt_id = (int)(apptDB->myReader["ptnt_id"]);
+						int appt_id = (int)(apptDB->myReader["appt_id"]);
 						DateTime^ createDate = (DateTime)(apptDB->myReader["appt_date"]);
-						this->dataGridView1->Rows->Add(createDate->ToString("hh:mm tt"), name, "X", ptnt_id);
+						this->dataGridView1->Rows->Add(createDate->ToString("hh:mm tt"), name, "X", ptnt_id, appt_id);
 						if(apptDB->myReader->Read())
 							dataLeft = true;
 						else
 							dataLeft = false;
 					 } else {
-						this->dataGridView1->Rows->Add(tempDate->ToString("hh:mm tt"), "OPEN", "");
+						this->dataGridView1->Rows->Add(tempDate->ToString("hh:mm tt"), "OPEN", "", -1);
 					 }
 				 }
 				 apptDB->closeConnection();
 			 }
+private: System::Void dateTimePicker1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 this->pullAppointments(this->dateTimePicker1->Value);
+		 }
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 this->dateTimePicker1->Value = this->dateTimePicker1->Value.AddDays(-1);		 
+		 }
+private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
+			 this->dateTimePicker1->Value = this->dateTimePicker1->Value.AddDays(1);
+		 }
+		 System::Void ApptMainView_Activate(System::Object ^ sender, System::EventArgs ^ e){
+			 this->pullAppointments(this->dateTimePicker1->Value);
+		 }
+
 };
 }

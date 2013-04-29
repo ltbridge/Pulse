@@ -2,7 +2,9 @@
 #include "stdafx.h"
 #include "PresEditAddView.h"
 #include "SessionData.h"
+#include "PtntData.h"
 #include "PatientGraphView.h"
+#include "Patient.h"
 
 using namespace std;
 using namespace System;
@@ -21,10 +23,31 @@ namespace Pulse {
 	/// </summary>
 	public ref class PatientMainView : public System::Windows::Forms::Form
 	{
+
+		private:
+		SessionData ^ session; Patient ^ patient; PtntData ^ PtntDB;
+	private: System::Windows::Forms::Label^  label11;
+
 	public:
 		PatientMainView(SessionData ^ s)
 		{
 			session = s;
+			patient = session->getcurrentPatient();
+			PtntDB = gcnew PtntData();
+			InitializeComponent();
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+			CheckPermissions();
+			this->Show();
+			//
+			//TODO: Add the constructor code here
+			//
+		}
+
+		PatientMainView(SessionData ^ s, Patient ^ p)
+		{
+			session = s;
+			patient = p;
+			PtntDB = gcnew PtntData();
 			InitializeComponent();
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
@@ -70,12 +93,6 @@ namespace Pulse {
 	private: System::Windows::Forms::TextBox^  textBox5;
 	private: System::Windows::Forms::TextBox^  textBox6;
 	private: System::Windows::Forms::TextBox^  textBox7;
-	private: System::Windows::Forms::Label^  label10;
-	private: System::Windows::Forms::Label^  label11;
-	private: System::Windows::Forms::Label^  label12;
-	private: System::Windows::Forms::Label^  label13;
-	private: System::Windows::Forms::Label^  label14;
-	private: System::Windows::Forms::LinkLabel^  linkLabel1;
 	private: System::Windows::Forms::Label^  label15;
 	private: System::Windows::Forms::Label^  label16;
 	private: System::Windows::Forms::Label^  label17;
@@ -89,18 +106,6 @@ namespace Pulse {
 	private: System::Windows::Forms::DateTimePicker^  dateTimePicker2;
 	private: System::Windows::Forms::Button^  button3;
 	private: System::Windows::Forms::Button^  button4;
-	private: System::Windows::Forms::LinkLabel^  linkLabel5;
-	private: System::Windows::Forms::LinkLabel^  linkLabel4;
-	private: System::Windows::Forms::LinkLabel^  linkLabel3;
-	private: System::Windows::Forms::LinkLabel^  linkLabel2;
-
-
-
-
-
-
-
-
 
 	private:
 		/// <summary>
@@ -112,17 +117,17 @@ namespace Pulse {
 	private: System::Windows::Forms::DateTimePicker^  dateTimePicker;
 	private: System::Windows::Forms::Button^  add_btn;
 	private: System::Windows::Forms::RichTextBox^  newComment;
-private: System::Windows::Forms::LinkLabel^  linkLabel6;
-private: System::Windows::Forms::Label^  label22;
-private: System::Windows::Forms::Label^  label23;
-private: System::Windows::Forms::TextBox^  textBox13;
-private: System::Windows::Forms::Label^  label24;
-private: System::Windows::Forms::TextBox^  textBox14;
+	private: System::Windows::Forms::LinkLabel^  linkLabel6;
+	private: System::Windows::Forms::Label^  label22;
+	private: System::Windows::Forms::Label^  label23;
+	private: System::Windows::Forms::TextBox^  textBox13;
+	private: System::Windows::Forms::Label^  label24;
+	private: System::Windows::Forms::TextBox^  textBox14;
+	private: System::Windows::Forms::Label^  label25;
+	private: System::Windows::Forms::DataGridView^  dataGridView1;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Number;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Name;
 
-private: System::Windows::Forms::Label^  label25;
-
-	private:
-		SessionData ^ session;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -133,6 +138,7 @@ private: System::Windows::Forms::Label^  label25;
 		{
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->label11 = (gcnew System::Windows::Forms::Label());
 			this->textBox14 = (gcnew System::Windows::Forms::TextBox());
 			this->label25 = (gcnew System::Windows::Forms::Label());
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
@@ -171,16 +177,9 @@ private: System::Windows::Forms::Label^  label25;
 			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->label20 = (gcnew System::Windows::Forms::Label());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
-			this->linkLabel5 = (gcnew System::Windows::Forms::LinkLabel());
-			this->linkLabel4 = (gcnew System::Windows::Forms::LinkLabel());
-			this->linkLabel3 = (gcnew System::Windows::Forms::LinkLabel());
-			this->linkLabel2 = (gcnew System::Windows::Forms::LinkLabel());
-			this->linkLabel1 = (gcnew System::Windows::Forms::LinkLabel());
-			this->label10 = (gcnew System::Windows::Forms::Label());
-			this->label11 = (gcnew System::Windows::Forms::Label());
-			this->label12 = (gcnew System::Windows::Forms::Label());
-			this->label13 = (gcnew System::Windows::Forms::Label());
-			this->label14 = (gcnew System::Windows::Forms::Label());
+			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->Number = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Name = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
 			this->commentList = (gcnew System::Windows::Forms::RichTextBox());
 			this->dateTimePicker = (gcnew System::Windows::Forms::DateTimePicker());
@@ -193,6 +192,7 @@ private: System::Windows::Forms::Label^  label25;
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
 			this->tabPage3->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->tabPage4->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -212,6 +212,7 @@ private: System::Windows::Forms::Label^  label25;
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->label11);
 			this->tabPage1->Controls->Add(this->textBox14);
 			this->tabPage1->Controls->Add(this->label25);
 			this->tabPage1->Controls->Add(this->textBox7);
@@ -240,6 +241,19 @@ private: System::Windows::Forms::Label^  label25;
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Info";
 			this->tabPage1->UseVisualStyleBackColor = true;
+			// 
+			// label11
+			// 
+			this->label11->AutoSize = true;
+			this->label11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label11->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->label11->Location = System::Drawing::Point(183, 314);
+			this->label11->Name = L"label11";
+			this->label11->Size = System::Drawing::Size(168, 17);
+			this->label11->TabIndex = 15;
+			this->label11->Text = L"Successfully Updated!";
+			this->label11->Visible = false;
 			// 
 			// textBox14
 			// 
@@ -641,16 +655,7 @@ private: System::Windows::Forms::Label^  label25;
 			// 
 			// tabPage3
 			// 
-			this->tabPage3->Controls->Add(this->linkLabel5);
-			this->tabPage3->Controls->Add(this->linkLabel4);
-			this->tabPage3->Controls->Add(this->linkLabel3);
-			this->tabPage3->Controls->Add(this->linkLabel2);
-			this->tabPage3->Controls->Add(this->linkLabel1);
-			this->tabPage3->Controls->Add(this->label10);
-			this->tabPage3->Controls->Add(this->label11);
-			this->tabPage3->Controls->Add(this->label12);
-			this->tabPage3->Controls->Add(this->label13);
-			this->tabPage3->Controls->Add(this->label14);
+			this->tabPage3->Controls->Add(this->dataGridView1);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Size = System::Drawing::Size(540, 359);
@@ -658,101 +663,31 @@ private: System::Windows::Forms::Label^  label25;
 			this->tabPage3->Text = L"Prescriptions";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
-			// linkLabel5
+			// dataGridView1
 			// 
-			this->linkLabel5->AutoSize = true;
-			this->linkLabel5->Location = System::Drawing::Point(155, 238);
-			this->linkLabel5->Name = L"linkLabel5";
-			this->linkLabel5->Size = System::Drawing::Size(112, 17);
-			this->linkLabel5->TabIndex = 14;
-			this->linkLabel5->TabStop = true;
-			this->linkLabel5->Text = L"Add Prescription";
+			this->dataGridView1->AllowUserToAddRows = false;
+			this->dataGridView1->AllowUserToDeleteRows = false;
+			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(2) {this->Number, 
+				this->Name});
+			this->dataGridView1->Location = System::Drawing::Point(10, 23);
+			this->dataGridView1->Name = L"dataGridView1";
+			this->dataGridView1->ReadOnly = true;
+			this->dataGridView1->Size = System::Drawing::Size(510, 339);
+			this->dataGridView1->TabIndex = 0;
 			// 
-			// linkLabel4
+			// Number
 			// 
-			this->linkLabel4->AutoSize = true;
-			this->linkLabel4->Location = System::Drawing::Point(155, 187);
-			this->linkLabel4->Name = L"linkLabel4";
-			this->linkLabel4->Size = System::Drawing::Size(112, 17);
-			this->linkLabel4->TabIndex = 13;
-			this->linkLabel4->TabStop = true;
-			this->linkLabel4->Text = L"Add Prescription";
+			this->Number->HeaderText = L"Number";
+			this->Number->Name = L"Number";
+			this->Number->ReadOnly = true;
 			// 
-			// linkLabel3
+			// Name
 			// 
-			this->linkLabel3->AutoSize = true;
-			this->linkLabel3->Location = System::Drawing::Point(155, 130);
-			this->linkLabel3->Name = L"linkLabel3";
-			this->linkLabel3->Size = System::Drawing::Size(112, 17);
-			this->linkLabel3->TabIndex = 12;
-			this->linkLabel3->TabStop = true;
-			this->linkLabel3->Text = L"Add Prescription";
-			// 
-			// linkLabel2
-			// 
-			this->linkLabel2->AutoSize = true;
-			this->linkLabel2->Location = System::Drawing::Point(155, 74);
-			this->linkLabel2->Name = L"linkLabel2";
-			this->linkLabel2->Size = System::Drawing::Size(112, 17);
-			this->linkLabel2->TabIndex = 11;
-			this->linkLabel2->TabStop = true;
-			this->linkLabel2->Text = L"Add Prescription";
-			// 
-			// linkLabel1
-			// 
-			this->linkLabel1->AutoSize = true;
-			this->linkLabel1->Location = System::Drawing::Point(155, 25);
-			this->linkLabel1->Name = L"linkLabel1";
-			this->linkLabel1->Size = System::Drawing::Size(112, 17);
-			this->linkLabel1->TabIndex = 10;
-			this->linkLabel1->TabStop = true;
-			this->linkLabel1->Text = L"Add Prescription";
-			this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &PatientMainView::linkLabel1_LinkClicked);
-			// 
-			// label10
-			// 
-			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(23, 238);
-			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(103, 17);
-			this->label10->TabIndex = 9;
-			this->label10->Text = L"Prescription #5";
-			// 
-			// label11
-			// 
-			this->label11->AutoSize = true;
-			this->label11->Location = System::Drawing::Point(23, 187);
-			this->label11->Name = L"label11";
-			this->label11->Size = System::Drawing::Size(103, 17);
-			this->label11->TabIndex = 8;
-			this->label11->Text = L"Prescription #4";
-			// 
-			// label12
-			// 
-			this->label12->AutoSize = true;
-			this->label12->Location = System::Drawing::Point(23, 130);
-			this->label12->Name = L"label12";
-			this->label12->Size = System::Drawing::Size(103, 17);
-			this->label12->TabIndex = 7;
-			this->label12->Text = L"Prescription #3";
-			// 
-			// label13
-			// 
-			this->label13->AutoSize = true;
-			this->label13->Location = System::Drawing::Point(23, 74);
-			this->label13->Name = L"label13";
-			this->label13->Size = System::Drawing::Size(103, 17);
-			this->label13->TabIndex = 6;
-			this->label13->Text = L"Prescription #2";
-			// 
-			// label14
-			// 
-			this->label14->AutoSize = true;
-			this->label14->Location = System::Drawing::Point(23, 25);
-			this->label14->Name = L"label14";
-			this->label14->Size = System::Drawing::Size(103, 17);
-			this->label14->TabIndex = 5;
-			this->label14->Text = L"Prescription #1";
+			this->Name->HeaderText = L"Name";
+			this->Name->Name = L"Name";
+			this->Name->ReadOnly = true;
+			this->Name->Width = 350;
 			// 
 			// tabPage4
 			// 
@@ -846,7 +781,7 @@ private: System::Windows::Forms::Label^  label25;
 			this->Controls->Add(this->label22);
 			this->Controls->Add(this->label23);
 			this->Controls->Add(this->tabControl1);
-			this->Name = L"PatientMainView";
+			//this->Name = L"PatientMainView";
 			this->Text = L"Patient Information";
 			this->Load += gcnew System::EventHandler(this, &PatientMainView::PatientMainView_Load);
 			this->tabControl1->ResumeLayout(false);
@@ -855,7 +790,7 @@ private: System::Windows::Forms::Label^  label25;
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
 			this->tabPage3->ResumeLayout(false);
-			this->tabPage3->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->tabPage4->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -867,8 +802,10 @@ private: System::Windows::Forms::Label^  label25;
 
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-
-			 
+			 PtntDB->update(patient->getPatientID(), this->textBox1->Text, this->textBox2->Text, this->textBox4->Text,
+							this->textBox5->Text, this->textBox6->Text, Convert::ToInt32(this->textBox7->Text), this->textBox3->Text, 
+							this->textBox14->Text, this->textBox8->Text, this->textBox9->Text);
+			 this->label11->Visible = true;
 		 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
@@ -878,8 +815,8 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 		 }
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) 
 		 {
-			 PresEditAddView ^ newPres = gcnew PresEditAddView(session);
-			 newPres->Owner = this->Owner;
+			 PresEditAddView ^ newPres = gcnew PresEditAddView(session, patient);
+			 newPres->Owner = this;
 			 
 			 
 		 }
@@ -895,8 +832,8 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 		 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 PatientGraphView ^ newGraph = gcnew PatientGraphView(session);
-			 newGraph->Owner = this->Owner;
+			 PatientGraphView ^ newGraph = gcnew PatientGraphView(session, patient);
+			 newGraph->Owner = this;
 		 }
 private: System::Void PatientMainView_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
@@ -913,7 +850,7 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 				 this->label23->Visible = false;
 				 this->linkLabel6->Visible = false;
 			 }
-			 PopulateFields(session->getcurrentPatient());
+			 PopulateFields();
 		 }
 
 		 System::Void NoEdit(){
@@ -929,7 +866,7 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			this->textBox14->ReadOnly = true;
 		 }
 
-		 System::Void PopulateFields(Patient ^ patient){
+		 System::Void PopulateFields(){
 			 this->textBox1->Text = patient->getFirst();
 			 this->textBox2->Text = patient->getLast();
 			 this->textBox3->Text = patient->getPhone();

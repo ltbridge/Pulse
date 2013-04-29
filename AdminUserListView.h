@@ -1,5 +1,7 @@
 #pragma once
 #include "AdminUserView.h"
+#include "UserData.h"
+#include "User.h"
 
 namespace Pulse {
 
@@ -15,18 +17,23 @@ namespace Pulse {
 	/// </summary>
 	public ref class AdminUserListView : public System::Windows::Forms::Form
 	{
+
+	private: SessionData ^ session; UserData ^ UserDB;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  username;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  first;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  last;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  type;
+
+
+
 	public:
 		AdminUserListView(SessionData ^ s)
 		{
 			session=s;
+			UserDB = gcnew UserData();
 			InitializeComponent();
 			this->Show();
 			InitializeDataGridView();
-		}
-		void InitializeDataGridView()
-		{
-			this->dataGridView1->Rows->Add("Meow", "Mix");
-			this->dataGridView1->Rows->Add("Please", "Deliver");
 		}
 
 
@@ -42,11 +49,10 @@ namespace Pulse {
 			}
 		}
 	private: System::Windows::Forms::DataGridView^  dataGridView1;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  first;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  last;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  type;
-	private: System::Windows::Forms::Button^  button1;
-			 SessionData ^ session;
+
+
+
+
 	protected: 
 
 	private:
@@ -63,67 +69,106 @@ namespace Pulse {
 		void InitializeComponent(void)
 		{
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->username = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->first = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->last = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->type = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// dataGridView1
 			// 
+			this->dataGridView1->AllowUserToAddRows = false;
+			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {this->first, 
-				this->last, this->type});
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {this->username, 
+				this->first, this->last, this->type});
 			this->dataGridView1->Location = System::Drawing::Point(13, 24);
 			this->dataGridView1->Name = L"dataGridView1";
+			this->dataGridView1->ReadOnly = true;
 			this->dataGridView1->RowHeadersWidthSizeMode = System::Windows::Forms::DataGridViewRowHeadersWidthSizeMode::AutoSizeToAllHeaders;
 			this->dataGridView1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
-			this->dataGridView1->Size = System::Drawing::Size(344, 194);
+			this->dataGridView1->Size = System::Drawing::Size(452, 242);
 			this->dataGridView1->TabIndex = 0;
+			this->dataGridView1->CellClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &AdminUserListView::dataGridView1_CellClick);
+			// 
+			// username
+			// 
+			this->username->HeaderText = L"UserName";
+			this->username->Name = L"username";
+			this->username->ReadOnly = true;
 			// 
 			// first
 			// 
 			this->first->HeaderText = L"First Name";
 			this->first->Name = L"first";
+			this->first->ReadOnly = true;
+			this->first->Width = 125;
 			// 
 			// last
 			// 
 			this->last->HeaderText = L"Last Name";
 			this->last->Name = L"last";
+			this->last->ReadOnly = true;
 			// 
 			// type
 			// 
-			this->type->HeaderText = L"User";
+			this->type->HeaderText = L"Authority";
 			this->type->Name = L"type";
-			// 
-			// button1
-			// 
-			this->button1->Location = System::Drawing::Point(148, 227);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 1;
-			this->button1->Text = L"Edit User";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &AdminUserListView::button1_Click);
+			this->type->ReadOnly = true;
 			// 
 			// AdminUserListView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(382, 262);
-			this->Controls->Add(this->button1);
+			this->ClientSize = System::Drawing::Size(482, 278);
 			this->Controls->Add(this->dataGridView1);
 			this->Name = L"AdminUserListView";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"AdminUserListView";
+			this->Activated += gcnew System::EventHandler(this, &AdminUserListView::AdminUserListView_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-				AdminUserView ^ adminEditScreen = gcnew AdminUserView(session);
-			 }
+	private: System::Void InitializeDataGridView()
+			{
+				dataGridView1->Rows->Clear();
+				UserDB->userList(0);
+				bool dataLeft = true;
+				if(UserDB->myReader->HasRows){
+					 while(dataLeft){
+						 String ^ atype;
+						int typeNum = (int)(UserDB->myReader["user_type"]);
+						switch(typeNum){
+							case 1: 
+								atype = "Admin";
+								break;
+							case 2:
+								atype = "Doctor";
+								break;
+							case 3:
+								atype = "Nurse";
+								break;
+							case 4:
+							default:
+								atype = "Patient";
+								break;
+						}
+						dataGridView1->Rows->Add((String^)(UserDB->myReader["user_name"]),(String^)(UserDB->myReader["user_firstName"]),(String^)(UserDB->myReader["user_lastName"]), atype);
+						if(!UserDB->myReader->Read())
+							dataLeft = false;
+					 }
+				 }
+				UserDB->closeConnection();
+			}
+private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+			User ^ tempUser = UserDB->get(this->dataGridView1[0,e->RowIndex]->Value->ToString(), false);
+			AdminUserView ^ adminEditScreen = gcnew AdminUserView(tempUser);
+		 }
+private: System::Void AdminUserListView_Load(System::Object^  sender, System::EventArgs^  e) {
+			 InitializeDataGridView();
+		 }
 };
 }

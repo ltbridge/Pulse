@@ -1,7 +1,8 @@
 #pragma once
 
 #include "stdafx.h"
-#include "SessionData.h"
+#include "Patient.h"
+#include "PresData.h"
 
 namespace Pulse {
 
@@ -20,8 +21,11 @@ namespace Pulse {
 	/// </summary>
 	public ref class PresEditAddView : public System::Windows::Forms::Form
 	{
+	private:
+		SessionData ^ session; Patient ^ patient;
+
 	public:
-		PresEditAddView(SessionData ^ s)
+		PresEditAddView(SessionData ^ s, Patient ^ p)
 		{
 			InitializeComponent();
 			this->Show();
@@ -29,6 +33,7 @@ namespace Pulse {
 			//TODO: Add the constructor code here
 			//
 			session = s;
+			patient = p;
 		}
 
 	protected:
@@ -80,8 +85,6 @@ namespace Pulse {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
-	private:
-		SessionData ^ session;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>

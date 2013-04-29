@@ -184,10 +184,12 @@ namespace Pulse {
 				submitLogin();
 		 }
 		System::Void FpwLink_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
+			this->login_message->Visible = true;
 			if(username_tb->Text == ""){
 				this->login_message->Text = "Please enter a username.";
 			} else {
-
+				UserDB->forgotPass(username_tb->Text);
+				this->login_message->Text = "An Admin has been notified.";
 			}
 		 }
 		/////////////////////////////
