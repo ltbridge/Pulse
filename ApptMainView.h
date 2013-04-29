@@ -1,7 +1,12 @@
 #pragma once
 #include"stdafx.h"
 #include "PatientAddView.h"
+#include "PatientMainView.h"
 #include "PatientSearchView.h"
+#include "ApptData.h"
+#include "PtntData.h"
+
+using namespace System;
 
 namespace Pulse {
 
@@ -25,6 +30,9 @@ namespace Pulse {
 			//TODO: Add the constructor code here
 			//
 			session = s;
+			apptDB = gcnew ApptData();
+			ptntDB = gcnew PtntData();
+			this->pullAppointments(this->dateTimePicker1->Value);
 			this->Show();
 		}
 
@@ -52,12 +60,19 @@ namespace Pulse {
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::Button^  button3;
 	private: System::Windows::Forms::Button^  button4;
+
+
+
+
+	private:
+		SessionData ^ session; ApptData^ apptDB; PtntData^ ptntDB;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Time;
 	private: System::Windows::Forms::DataGridViewButtonColumn^  Name;
 	private: System::Windows::Forms::DataGridViewButtonColumn^  Del;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  PatientID;
 
-	private:
-		SessionData ^ session;
+
+
 
 
 
@@ -90,6 +105,7 @@ namespace Pulse {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->PatientID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -150,8 +166,8 @@ namespace Pulse {
 			// 
 			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {this->Time, this->Name, 
-				this->Del});
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {this->Time, this->Name, 
+				this->Del, this->PatientID});
 			this->dataGridView1->Location = System::Drawing::Point(65, 110);
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->Size = System::Drawing::Size(500, 168);
@@ -163,14 +179,13 @@ namespace Pulse {
 			this->Time->HeaderText = L"Time";
 			this->Time->Name = L"Time";
 			this->Time->ReadOnly = true;
-			this->Time->Width = 175;
 			// 
 			// Name
 			// 
 			this->Name->HeaderText = L"Name";
 			this->Name->Name = L"Name";
 			this->Name->Resizable = System::Windows::Forms::DataGridViewTriState::True;
-			this->Name->Width = 250;
+			this->Name->Width = 300;
 			// 
 			// Del
 			// 
@@ -218,11 +233,18 @@ namespace Pulse {
 			this->button4->Text = L"Next";
 			this->button4->UseVisualStyleBackColor = true;
 			// 
+			// PatientID
+			// 
+			this->PatientID->HeaderText = L"PatientID";
+			this->PatientID->Name = L"PatientID";
+			this->PatientID->Visible = false;
+			// 
 			// ApptMainView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(616, 335);
+			this->ControlBox = false;
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
@@ -239,7 +261,6 @@ namespace Pulse {
 			this->Load += gcnew System::EventHandler(this, &ApptMainView::ApptMainView_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
-			this->ControlBox = false;
 			this->PerformLayout();
 
 		}
@@ -247,6 +268,20 @@ namespace Pulse {
 	private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+				
+				 String ^ check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
+				 if(e->ColumnIndex == 1){
+					if(check == "OPEN")
+						PatientSearchView ^ pSearch = gcnew PatientSearchView(session);
+					else{
+						session->setcurrentPatient(ptntDB->get((int)(this->dataGridView1[3,e->RowIndex]->Value), false));
+						PatientMainView ^ pMain = gcnew PatientMainView(session);
+					}
+				} else if (e->ColumnIndex == 2) {
+					if(check == "X"){
+						//delete appointment
+					}
+				}
 			 }
 	private: System::Void ApptMainView_Load(System::Object^  sender, System::EventArgs^  e) {
 				 String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
@@ -263,6 +298,35 @@ namespace Pulse {
 	private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 				this->Owner->Show();
 				this->Close();
+			 }
+
+			 System::Void pullAppointments(DateTime^ chosenDate){
+				 apptDB->get(chosenDate, session->getcurrentUser()->getdoctorId());
+				 
+				 bool dataLeft;
+				 if(apptDB->myReader->HasRows)
+					 dataLeft = true;
+
+				 for(int i = 9; i < 18; i++){
+					 DateTime^ tempDate = gcnew DateTime(chosenDate->Year, chosenDate->Month, chosenDate->Day, i, 0, 0);
+					 DateTime^ rowDate = gcnew DateTime(1,1,1,0,0,0);
+					 
+					 if(dataLeft)
+						rowDate = (DateTime)(apptDB->myReader["appt_date"]);
+					 if(rowDate->Hour == i){
+						String^ name = (String^)(apptDB->myReader["ptnt_firstName"])+" "+(String^)(apptDB->myReader["ptnt_lastName"]);
+						int ptnt_id = (int)(apptDB->myReader["ptnt_id"]);
+						DateTime^ createDate = (DateTime)(apptDB->myReader["appt_date"]);
+						this->dataGridView1->Rows->Add(createDate->ToString("hh:mm tt"), name, "X", ptnt_id);
+						if(apptDB->myReader->Read())
+							dataLeft = true;
+						else
+							dataLeft = false;
+					 } else {
+						this->dataGridView1->Rows->Add(tempDate->ToString("hh:mm tt"), "OPEN", "");
+					 }
+				 }
+				 apptDB->closeConnection();
 			 }
 };
 }

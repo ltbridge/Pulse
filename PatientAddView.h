@@ -84,6 +84,8 @@ namespace Pulse {
 		private: System::Windows::Forms::Label^  label13;
 		private: System::Windows::Forms::Label^  label14;
 		private: System::Windows::Forms::Label^  label15;
+	private: System::Windows::Forms::TextBox^  textBox4;
+	private: System::Windows::Forms::Label^  label16;
 
 		protected: 
 
@@ -128,6 +130,8 @@ namespace Pulse {
 			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->label15 = (gcnew System::Windows::Forms::Label());
+			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
+			this->label16 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// label1
@@ -135,7 +139,7 @@ namespace Pulse {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(208, 308);
+			this->label1->Location = System::Drawing::Point(359, 308);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(142, 17);
 			this->label1->TabIndex = 0;
@@ -240,7 +244,7 @@ namespace Pulse {
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(36, 255);
+			this->label8->Location = System::Drawing::Point(36, 281);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(54, 13);
 			this->label8->TabIndex = 13;
@@ -248,7 +252,7 @@ namespace Pulse {
 			// 
 			// insuranceBox
 			// 
-			this->insuranceBox->Location = System::Drawing::Point(103, 250);
+			this->insuranceBox->Location = System::Drawing::Point(103, 276);
 			this->insuranceBox->Name = L"insuranceBox";
 			this->insuranceBox->Size = System::Drawing::Size(164, 20);
 			this->insuranceBox->TabIndex = 8;
@@ -256,7 +260,7 @@ namespace Pulse {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(36, 279);
+			this->label9->Location = System::Drawing::Point(36, 305);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(49, 13);
 			this->label9->TabIndex = 15;
@@ -264,7 +268,7 @@ namespace Pulse {
 			// 
 			// policyBox
 			// 
-			this->policyBox->Location = System::Drawing::Point(103, 276);
+			this->policyBox->Location = System::Drawing::Point(103, 302);
 			this->policyBox->Name = L"policyBox";
 			this->policyBox->Size = System::Drawing::Size(164, 20);
 			this->policyBox->TabIndex = 9;
@@ -272,7 +276,7 @@ namespace Pulse {
 			// label10
 			// 
 			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(37, 227);
+			this->label10->Location = System::Drawing::Point(37, 253);
 			this->label10->Name = L"label10";
 			this->label10->Size = System::Drawing::Size(32, 13);
 			this->label10->TabIndex = 17;
@@ -280,7 +284,7 @@ namespace Pulse {
 			// 
 			// emailBox
 			// 
-			this->emailBox->Location = System::Drawing::Point(103, 224);
+			this->emailBox->Location = System::Drawing::Point(103, 250);
 			this->emailBox->Name = L"emailBox";
 			this->emailBox->Size = System::Drawing::Size(164, 20);
 			this->emailBox->TabIndex = 7;
@@ -289,7 +293,7 @@ namespace Pulse {
 			// 
 			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(175, 328);
+			this->button1->Location = System::Drawing::Point(327, 328);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(204, 34);
 			this->button1->TabIndex = 10;
@@ -367,11 +371,29 @@ namespace Pulse {
 			this->label15->TabIndex = 25;
 			this->label15->Text = L"Pulse Account";
 			// 
+			// textBox4
+			// 
+			this->textBox4->Location = System::Drawing::Point(103, 224);
+			this->textBox4->Name = L"textBox4";
+			this->textBox4->Size = System::Drawing::Size(164, 20);
+			this->textBox4->TabIndex = 26;
+			// 
+			// label16
+			// 
+			this->label16->AutoSize = true;
+			this->label16->Location = System::Drawing::Point(37, 227);
+			this->label16->Name = L"label16";
+			this->label16->Size = System::Drawing::Size(38, 13);
+			this->label16->TabIndex = 27;
+			this->label16->Text = L"Phone";
+			// 
 			// PatientAddView
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(544, 372);
+			this->Controls->Add(this->textBox4);
+			this->Controls->Add(this->label16);
 			this->Controls->Add(this->label15);
 			this->Controls->Add(this->label14);
 			this->Controls->Add(this->label13);

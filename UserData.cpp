@@ -14,22 +14,13 @@ UserData::~UserData(void)
 
 bool UserData::validLogin(System::String^ userN, System::String^ passW){
 	bool result = false;
-	SqlConnection^ con=gcnew SqlConnection();
-	con->ConnectionString="Data Source=OBI-LAPTOP\\PULSEDB;Initial Catalog=PulseDatabase;Integrated Security=True";
-
-	SqlCommand^ com=gcnew SqlCommand();
-	com->Connection=con;
-	com->CommandText="Select * From Users where user_name='"+userN+"' AND user_password='"+passW+"'";
-	con->Open();
-
-	SqlDataReader^ myReader;
-	myReader=com->ExecuteReader();
-	myReader->Read();
+	System::String^ querystring = 
+		"Select * From Users where user_name='"+userN+"' AND user_password='"+passW+"'";
+	query(querystring);
 
 	if(myReader->HasRows)
 			result = true;
-	myReader->Close();
-	con->Close();
+	closeConnection();
 	return result;
 }
 
@@ -57,7 +48,13 @@ User^ UserData::get(System::String^ userN, System::String^ passW){
 	}
 	System::String^ fName = (System::String^)myReader["user_firstName"];
 	System::String^ lName = (System::String^)myReader["user_lastName"];
-	int doc_id = (int)myReader["user_doc_id"];
+	
+	int doc_id;
+	if(type == "Doctor"){
+		 doc_id= (int)myReader["user_id"];
+	} else {
+		doc_id = (int)myReader["user_doc_id"];
+	}
 	int user_id = (int)myReader["user_id"];
 	User^ returnUser = gcnew User(fName, lName, doc_id, type, user_id);
 	closeConnection();

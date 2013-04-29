@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "PtntData.h"
-#pragma once
+
 namespace Pulse {
 
 	using namespace System;
@@ -16,6 +16,8 @@ namespace Pulse {
 	/// </summary>
 	public ref class PatientSearchView : public System::Windows::Forms::Form
 	{
+
+	private: PtntData ^ ptntDB; SessionData^ session;
 	public:
 		PatientSearchView(SessionData ^ s)
 		{
@@ -23,7 +25,7 @@ namespace Pulse {
 			//
 			//TODO: Add the constructor code here
 			//
-			PtntDB = gcnew PtntData();
+			ptntDB = gcnew PtntData();
 			this->Show();
 			session = s;
 
@@ -41,7 +43,6 @@ namespace Pulse {
 			}
 		}
 	private: System::Windows::Forms::Label^  label1;
-	protected: 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
@@ -52,9 +53,6 @@ namespace Pulse {
 	private: System::Windows::Forms::TextBox^  textBox3;
 	private: System::Windows::Forms::TextBox^  textBox4;
 	private: System::Windows::Forms::Button^  searchButton;
-
-
-	private: PtntData ^ PtntDB; SessionData^ session;
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::DataGridView^  dataGridView1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  ID;
@@ -279,15 +277,37 @@ namespace Pulse {
 
 private: System::Void searchButton_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 
-		 }
-private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) 
-		 {
-			 PatientSearchView::Close();
+			 String ^ first = "", ^ last = "", ^ phone = "";
+			 int id = 0;;
+
+			 if(this->textBox1->Text != "")
+				 first = (String ^)(this->textBox1->Text);
+			 if(this->textBox2->Text != "")
+				 last = (String ^)(this->textBox2->Text);
+			 if(this->textBox3->Text != "")
+				 phone = (String ^)(this->textBox3->Text);
+			 if(this->textBox4->Text != "")
+				 id = Convert::ToInt32(this->textBox4->Text);
+			 ptntDB->search(first, last, phone, id);
+			 fillResult();
 		 }
 private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+		 }
+private: System::Void fillResult() {
+			 bool dataLeft;
+			 if(ptntDB->myReader->HasRows)
+				 dataLeft = true;
+			 while(dataLeft){
+				int id = (int)(ptntDB->myReader["ptnt_id"]);
+				String ^ first = (String ^)(ptntDB->myReader["ptnt_firstName"]);
+				String ^ last = (String ^)(ptntDB->myReader["ptnt_lastName"]);
+				String ^ phone = (String ^)(ptntDB->myReader["ptnt_phone"]);
+				this->dataGridView1->Rows->Add(id, first, last, phone);
+				if(!ptntDB->myReader->Read())
+					dataLeft = false;
+			 }
 		 }
 };
 }

@@ -5,7 +5,7 @@
 Patient::Patient(){}
 
 Patient::Patient(int newID, String ^ first, String ^ last, String ^ newAddress,
-		String ^ newCity, String ^ newState, int zip, String^ newEmail, String ^newInsur, String ^ newPolicy)
+		String ^ newCity, String ^ newState, int zip, String ^ newphone, String^ newEmail, String ^newInsur, String ^ newPolicy)
 {
 	patientID = newID;
 	firstName = first;
@@ -14,6 +14,7 @@ Patient::Patient(int newID, String ^ first, String ^ last, String ^ newAddress,
 	city = newCity;
 	state = newState;
 	zipcode = zip;
+	phone = newphone;
 	email = newEmail;
 	insurance = newInsur;
 	policyNum = newPolicy;
@@ -32,6 +33,7 @@ String ^ Patient::getAddress(){return address;}
 String ^ Patient::getCity(){return city;}
 String ^ Patient::getState(){return state;}
 int Patient::getZipcode(){return zipcode;}
+String ^ Patient::getPhone(){return phone;}
 String ^ Patient::getEmail(){return email;}
 String ^ Patient::getInsurance(){return insurance;}
 String ^ Patient::getPolicyNum(){return policyNum;}

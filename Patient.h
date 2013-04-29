@@ -8,7 +8,7 @@ public ref class Patient
 public:
 	Patient();
 	Patient(int newID, String ^ first, String ^ last, String ^ newAddress,
-		String ^ newCity, String ^ newState, int zip, String^ newEmail, String ^newInsur, String ^ newPolicy);
+		String ^ newCity, String ^ newState, int zip, String^ phone, String^ newEmail, String ^newInsur, String ^ newPolicy);
 	virtual ~Patient(void);
 	String ^ getFirst();
 	String ^ getLast();
@@ -17,6 +17,7 @@ public:
 	String ^ getCity();
 	String ^ getState();
 	int getZipcode();
+	String ^ getPhone();
 	String ^ getEmail();
 	String ^ getInsurance();
 	String ^ getPolicyNum();
@@ -29,6 +30,7 @@ private:
 	String ^ city;
 	String ^ state;
 	int zipcode;
+	String ^ phone;
 	String ^ email;
 	String ^ insurance;
 	String ^ policyNum;

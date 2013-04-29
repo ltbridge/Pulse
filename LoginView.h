@@ -184,7 +184,11 @@ namespace Pulse {
 				submitLogin();
 		 }
 		System::Void FpwLink_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
+			if(username_tb->Text == ""){
+				this->login_message->Text = "Please enter a username.";
+			} else {
 
+			}
 		 }
 		/////////////////////////////
 		//Login Functions
@@ -217,7 +221,7 @@ namespace Pulse {
 			this->username_tb->Text = "";
 			
 			String^ type = session->getcurrentUser()->gettype();
-			
+			this->login_message->Text = "";
 			if(type == "Admin"){
 				AdminMainView ^ admin = gcnew AdminMainView(session);
 				admin->Owner = this;

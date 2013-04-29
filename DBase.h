@@ -9,10 +9,13 @@ public:
 
 protected:
 	void query(System::String^ queryString);
-	void closeConnection();
 
 	SqlConnection^ con;
 	SqlCommand^ com;
+
+public:
+	void closeConnection();
 	SqlDataReader^ myReader;
+
 };
 
