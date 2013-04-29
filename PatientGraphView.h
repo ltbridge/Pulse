@@ -18,7 +18,7 @@ namespace Pulse {
 	public ref class PatientGraphView : public System::Windows::Forms::Form
 	{
 
-		private: SessionData^ session; Patient ^ patient;
+		private: SessionData^ session; Patient ^ patient; StatData ^ StatDB;
 
 		public:
 			PatientGraphView(SessionData ^ s, Patient ^ p)
@@ -26,7 +26,12 @@ namespace Pulse {
 				session = s;
 				patient = p;
 				InitializeComponent();
+				StatDB = gcnew StatData();
+				this->comboBox1->SelectedIndex = 0;
 				this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+				updateLabels();
+				 updateAxis();
+				 drawChart();
 				this->Show();
 				//
 				//TODO: Add the constructor code here
@@ -71,6 +76,7 @@ namespace Pulse {
 				System::Windows::Forms::DataVisualization::Charting::Legend^  legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
 				System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 				System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+				System::Windows::Forms::DataVisualization::Charting::Series^  series3 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 				this->dateTimePicker1 = (gcnew System::Windows::Forms::DateTimePicker());
 				this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 				this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
@@ -83,9 +89,11 @@ namespace Pulse {
 				// 
 				// dateTimePicker1
 				// 
+				this->dateTimePicker1->CustomFormat = L"MMMM";
+				this->dateTimePicker1->Format = System::Windows::Forms::DateTimePickerFormat::Custom;
 				this->dateTimePicker1->Location = System::Drawing::Point(12, 12);
 				this->dateTimePicker1->Name = L"dateTimePicker1";
-				this->dateTimePicker1->Size = System::Drawing::Size(200, 20);
+				this->dateTimePicker1->Size = System::Drawing::Size(91, 20);
 				this->dateTimePicker1->TabIndex = 0;
 				this->dateTimePicker1->ValueChanged += gcnew System::EventHandler(this, &PatientGraphView::dateTimePicker1_ValueChanged);
 				// 
@@ -101,7 +109,7 @@ namespace Pulse {
 				// 
 				this->comboBox1->FormattingEnabled = true;
 				this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"Weight", L"Blood Pressure", L"Sugar Level"});
-				this->comboBox1->Location = System::Drawing::Point(286, 11);
+				this->comboBox1->Location = System::Drawing::Point(246, 11);
 				this->comboBox1->Name = L"comboBox1";
 				this->comboBox1->Size = System::Drawing::Size(121, 21);
 				this->comboBox1->TabIndex = 8;
@@ -120,7 +128,7 @@ namespace Pulse {
 				// label4
 				// 
 				this->label4->AutoSize = true;
-				this->label4->Location = System::Drawing::Point(218, 14);
+				this->label4->Location = System::Drawing::Point(178, 14);
 				this->label4->Name = L"label4";
 				this->label4->Size = System::Drawing::Size(62, 13);
 				this->label4->TabIndex = 11;
@@ -136,16 +144,24 @@ namespace Pulse {
 				this->chart2->Location = System::Drawing::Point(7, 43);
 				this->chart2->Name = L"chart2";
 				this->chart2->Palette = System::Windows::Forms::DataVisualization::Charting::ChartColorPalette::Fire;
+				series1->BorderWidth = 3;
 				series1->ChartArea = L"ChartArea1";
 				series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
 				series1->Legend = L"Legend1";
 				series1->Name = L"Data";
+				series2->BorderWidth = 3;
 				series2->ChartArea = L"ChartArea1";
 				series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
 				series2->Legend = L"Legend1";
-				series2->Name = L"Goal";
+				series2->Name = L"Data2";
+				series3->BorderWidth = 4;
+				series3->ChartArea = L"ChartArea1";
+				series3->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+				series3->Legend = L"Legend1";
+				series3->Name = L"Goal";
 				this->chart2->Series->Add(series1);
 				this->chart2->Series->Add(series2);
+				this->chart2->Series->Add(series3);
 				this->chart2->Size = System::Drawing::Size(616, 209);
 				this->chart2->TabIndex = 12;
 				this->chart2->Text = L"chart2";
@@ -179,64 +195,119 @@ namespace Pulse {
 			}
 	#pragma endregion
 
-	private: System::Void dateTimePicker1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
-				 String ^ tempstartdate =  dateTimePicker1->Value.ToString("MM/dd/yyyy");
-				 //dateTimePicker1->Value = DateTime->Now->AddDays(7);
-				 //string startdate;
-				 //MarshalString(tempstartdate, startdate);
-				 //Pull all stats from this date to end date and display them on the graph and goal line if applicable
+	private:System::Void drawChart(){
+				 int index = this->comboBox1->SelectedIndex;
+				 switch (index){
+					case 0:
+						StatDB->getSeries("weight", this->dateTimePicker1->Value, patient->getPatientID());
+						AssignPoints(0);
+						break;
+					case 1:
+						StatDB->getSeries("systolic", this->dateTimePicker1->Value, patient->getPatientID());
+						AssignPoints(0);
+						StatDB->getSeries("diastolic", this->dateTimePicker1->Value, patient->getPatientID());
+						AssignPoints(1);
+						break;
+					case 2:
+						StatDB->getSeries("sugar", this->dateTimePicker1->Value, patient->getPatientID());
+						AssignPoints(0);
+						break;
 
-			 }
-	private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
-				 //String^ tempenddate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");
-				 //string enddate;
-				 //MarshalString(tempenddate, enddate);
-				 //Change end date of graph
+				 }
 			 }
 
-	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) 
-			 {
-				 if(comboBox1->SelectedIndex == 0)
+			 System::Void AssignPoints(int seriesnum){
+				int xAxis = System::DateTime::DaysInMonth(this->dateTimePicker1->Value.Year, this->dateTimePicker1->Value.Month);
+				int steadyline = 0;
+				DateTime ^ thisday = System::DateTime::Today;
+				bool dataLeft = StatDB->myReader->HasRows ? true : false;
+				bool pointset = false;
+				for(int i = 1; i <= xAxis; i++){
+					if(dataLeft){
+						DateTime ^ dbDate = (DateTime^)(StatDB->myReader["stat_date"]);
+						if(dbDate->Day == i){
+							this->chart2->Series[seriesnum]->Points->AddXY(i,(int)(StatDB->myReader["stat_data"]));
+							steadyline = (int)(StatDB->myReader["stat_data"]);
+							pointset = true;
+							if(!StatDB->myReader->Read())
+								dataLeft = false;
+						}
+						pointset = false;
+					}
+					if (thisday->Day > i && !pointset){
+						this->chart2->Series[seriesnum]->Points->AddXY(i,steadyline);
+					}
+				}
+			 }
+
+			 System::Void updateLabels(){
+				if(comboBox1->SelectedIndex == 0)
 				 {
-					 this->label5->Text = L"Weight";
 					 this->chart2->Series[0]->Points->Clear();
 					 this->chart2->Series[1]->Points->Clear();
+					 this->chart2->Series[2]->Points->Clear();
+					 this->label5->Text = L"Weight";
+					 this->chart2->Series[0]->Name = "Weight";
+					 this->chart2->Series[1]->Enabled = false;
+					 this->chart2->Series[2]->Name = "Goal";
+					 this->chart2->ChartAreas["ChartArea1"]->AxisY->Title = "lb";
 				 }
 				 else if(comboBox1->SelectedIndex == 1)
 				 {
 					 this->label5->Text = L"Blood Pressure";
 					 this->chart2->Series[0]->Points->Clear();
 					 this->chart2->Series[1]->Points->Clear();
+					 this->chart2->Series[2]->Points->Clear();
+					 this->chart2->Series[1]->Enabled = true;
+					 this->chart2->Series[0]->Name = "Systolic";
+					 this->chart2->Series[1]->Name = "Diastolic";
+					 this->chart2->Series[2]->Name = "Goal";
+					 this->chart2->ChartAreas["ChartArea1"]->AxisY->Title = "mmHg";
 				 }
 				 else if(comboBox1->SelectedIndex == 2)
 				 {
-					 this->label5->Text = L"Sugar Level";
 					 this->chart2->Series[0]->Points->Clear();
 					 this->chart2->Series[1]->Points->Clear();
+					 this->chart2->Series[2]->Points->Clear();
+					 this->label5->Text = L"Sugar Level";
+					 this->chart2->Series[0]->Name = "Sugar Level";
+					 this->chart2->Series[1]->Enabled = false;
+					 this->chart2->Series[2]->Name = "Goal";
+					 this->chart2->ChartAreas["ChartArea1"]->AxisY->Title = "mg/dl";
 				 }
+			 }
+
+			 System::Void updateAxis(){
+				this->chart2->ChartAreas["ChartArea1"]->AxisX->Interval = 7;
+				this->chart2->ChartAreas["ChartArea1"]->AxisX->Title = "Day of the Month";
+				//this->chart2->ChartAreas["ChartArea1"]->AxisX->IntervalType = System::Windows::Forms::DataVisualization::Charting::DateTimeIntervalType::Days;
+			 }
+			System::Void dateTimePicker1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+				 updateLabels();
+				 updateAxis();
+				 drawChart();
+			 }
+	private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+
+	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) 
+			 {
+				 updateLabels();
+				 updateAxis();
+				 drawChart();
 			 }
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
 				 String ^ temp = textBox1->Text;
+				 int goal= 0;
 				 if(temp != "")
-				 {
-				 int goal = int::Parse(temp);
+					goal = int::Parse(temp);
+				 int xAxis = System::DateTime::DaysInMonth(this->dateTimePicker1->Value.Year, this->dateTimePicker1->Value.Month);
 				 if(goal != 0)
 				 {
-					 this->chart2->Series[1]->Points->AddXY(0,goal);
-					 this->chart2->Series[1]->Points->AddXY(14,goal);
+					 this->chart2->Series[2]->Points->AddXY(1,goal);
+					 this->chart2->Series[2]->Points->AddXY(xAxis,goal);
 				 }
-				 }
-				 /*this->chart2->Series[0]->Points->AddXY(1,25);
-				 this->chart2->Series[0]->Points->AddXY(2,10);
-				 this->chart2->Series[0]->Points->AddXY(5,5);
-				 this->chart2->Series[0]->Points->AddXY(9,5);
-				 this->chart2->Series[0]->Points->AddXY(15,5);*/
-				 //string goal;
-				 //MarshalString(temp, goal);
-
-				 //Save Goal in database along with goaltype
-				 //Refresh graph
 			 }
 
 	private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -245,5 +316,6 @@ namespace Pulse {
 			 }
 	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
+
 };
 }

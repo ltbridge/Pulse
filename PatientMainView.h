@@ -47,6 +47,7 @@ namespace Pulse {
 			PtntDB = gcnew PtntData();
 			InitializeComponent();
 			StatDB = gcnew StatData();
+			populateStatFields();
 			PresDB = gcnew PresData();
 			pullPrescriptions();
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -66,6 +67,7 @@ namespace Pulse {
 			CommDB = gcnew CommData();
 			pullComments();
 			StatDB = gcnew StatData();
+			populateStatFields();
 			PresDB = gcnew PresData();
 			pullPrescriptions();
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -539,9 +541,9 @@ namespace Pulse {
 				static_cast<System::Byte>(0)));
 			this->label24->Location = System::Drawing::Point(267, 135);
 			this->label24->Name = L"label24";
-			this->label24->Size = System::Drawing::Size(42, 13);
+			this->label24->Size = System::Drawing::Size(47, 13);
 			this->label24->TabIndex = 25;
-			this->label24->Text = L"Diatolic";
+			this->label24->Text = L"Diastolic";
 			// 
 			// button3
 			// 
@@ -580,6 +582,7 @@ namespace Pulse {
 			this->dateTimePicker2->Name = L"dateTimePicker2";
 			this->dateTimePicker2->Size = System::Drawing::Size(200, 20);
 			this->dateTimePicker2->TabIndex = 21;
+			this->dateTimePicker2->ValueChanged += gcnew System::EventHandler(this, &PatientMainView::dateTimePicker2_ValueChanged);
 			// 
 			// label15
 			// 
@@ -863,12 +866,20 @@ private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Wi
 		 }
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			 String ^ temp = textBox1->Text; 
-			 temp = textBox2->Text; 
-			 temp = textBox3->Text; 
-			 String ^ tempdate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");
+			 String ^ sugar = textBox10->Text; 
+			 String ^ systolic = textBox11->Text; 
+			 String ^ diastolic = textBox13->Text; 
+			 String ^ weight = textBox12->Text; 
+			 DateTime ^ tempdate =  dateTimePicker2->Value;
 
-			 //Save everything from the entered fields, into the database for the date specified
+			 if(sugar != "")
+				 StatDB->add("sugar", tempdate, Convert::ToInt32(sugar), patient->getPatientID());
+			 if(systolic != "")
+				 StatDB->add("systolic", tempdate, Convert::ToInt32(systolic), patient->getPatientID());
+			 if(diastolic != "")
+				 StatDB->add("diastolic", tempdate, Convert::ToInt32(diastolic), patient->getPatientID());
+			 if(weight != "")
+				 StatDB->add("weight", tempdate, Convert::ToInt32(weight), patient->getPatientID());
 
 		 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -980,6 +991,42 @@ private: System::Void button2_Click_1(System::Object^  sender, System::EventArgs
 		 }
 		 System::Void PatientMain_Activated(System::Object^  sender, System::EventArgs^  e){
 			 pullPrescriptions();
+		 }
+private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			populateStatFields();
+		 }
+		 System::Void populateStatFields(){
+			 StatDB->get(this->dateTimePicker2->Value, patient->getPatientID());
+
+			 array<String^>^ types = gcnew array<String^>(4);
+			 types[0] = "diastolic";
+			 types[1] = "sugar";
+			 types[2] = "systolic";
+			 types[3] = "weight";
+
+			 String^ statdata;
+			 String^ stattype;
+
+			 bool dataLeft = StatDB->myReader->HasRows ? true : false;
+			 for(int i = 0; i < 4; i++){
+				 stattype = types[i];
+				 if(dataLeft && (String^)(StatDB->myReader["stat_type"]) == stattype){
+					statdata = StatDB->myReader["stat_data"]->ToString();
+					if(!StatDB->myReader->Read())
+						dataLeft = false;
+				 } else {
+					 statdata = "";
+				 }
+				if(stattype == "sugar")
+					textBox10->Text = statdata;
+				if(stattype == "systolic")
+					textBox11->Text = statdata; 
+				if(stattype == "diastolic")
+					textBox13->Text = statdata; 
+				if(stattype == "weight")
+					textBox12->Text = statdata; 
+			 }
+			 StatDB->closeConnection();
 		 }
 };
 }
