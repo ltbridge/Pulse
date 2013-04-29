@@ -348,16 +348,18 @@ private: System::Void searchButton_Click(System::Object^  sender, System::EventA
 private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-			String ^ check = this->dataGridView1[4,e->RowIndex]->Value->ToString();
-			if(check == "appt"){
-				if(apptDB->add(date, this->session->getcurrentUser()->getdoctorId(), Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value))){
-					this->Close();
-				}else
-					this->label8->Visible = true;
-			} else {
-				Patient ^ patient = ptntDB->get(Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value), false);
-				PatientMainView ^ pMain = gcnew PatientMainView(session, patient);
-				pMain->Owner = this->Owner;
+			if(e->RowIndex >=0 ){
+				String ^ check = this->dataGridView1[4,e->RowIndex]->Value->ToString();
+				if(check == "appt"){
+					if(apptDB->add(date, this->session->getcurrentUser()->getdoctorId(), Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value))){
+						this->Close();
+					}else
+						this->label8->Visible = true;
+				} else {
+					Patient ^ patient = ptntDB->get(Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value), false);
+					PatientMainView ^ pMain = gcnew PatientMainView(session, patient);
+					pMain->Owner = this->Owner;
+				}
 			}
 		 
 		 }

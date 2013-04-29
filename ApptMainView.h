@@ -286,25 +286,26 @@ namespace Pulse {
 	private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-				
-				 String ^ check;
-				 if(e->ColumnIndex == 1){
-					check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
-					if(check == "OPEN"){
-						String ^ test = this->dataGridView1[0,e->RowIndex]->Value->ToString();
-						DateTime ^ openTime = gcnew DateTime;
-						openTime = DateTime::Parse(""+this->dateTimePicker1->Value.ToString("MM/dd/yyyy ")+""+this->dataGridView1[0,e->RowIndex]->Value->ToString()+"");
-						PatientSearchView ^ pSearch = gcnew PatientSearchView(session, openTime);
-					} else{
-						session->setcurrentPatient(ptntDB->get((int)(this->dataGridView1[3,e->RowIndex]->Value), false));
-						PatientMainView ^ pMain = gcnew PatientMainView(session);
-					}
-				} else if (e->ColumnIndex == 2) {
-					check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
-					if(check == "X"){
-						int appt_id = Convert::ToInt32(this->dataGridView1[4,e->RowIndex]->Value);
-						apptDB->remove(appt_id);
-						pullAppointments(this->dateTimePicker1->Value);
+				if(e->RowIndex >=0){
+					 String ^ check;
+					 if(e->ColumnIndex == 1){
+						check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
+						if(check == "OPEN"){
+							String ^ test = this->dataGridView1[0,e->RowIndex]->Value->ToString();
+							DateTime ^ openTime = gcnew DateTime;
+							openTime = DateTime::Parse(""+this->dateTimePicker1->Value.ToString("MM/dd/yyyy ")+""+this->dataGridView1[0,e->RowIndex]->Value->ToString()+"");
+							PatientSearchView ^ pSearch = gcnew PatientSearchView(session, openTime);
+						} else{
+							session->setcurrentPatient(ptntDB->get((int)(this->dataGridView1[3,e->RowIndex]->Value), false));
+							PatientMainView ^ pMain = gcnew PatientMainView(session);
+						}
+					} else if (e->ColumnIndex == 2) {
+						check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
+						if(check == "X"){
+							int appt_id = Convert::ToInt32(this->dataGridView1[4,e->RowIndex]->Value);
+							apptDB->remove(appt_id);
+							pullAppointments(this->dateTimePicker1->Value);
+						}
 					}
 				}
 			 }

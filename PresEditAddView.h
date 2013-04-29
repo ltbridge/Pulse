@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "Patient.h"
 #include "PresData.h"
+#include "User.h"
+#include "UserData.h"
 
 namespace Pulse {
 
@@ -22,13 +24,26 @@ namespace Pulse {
 	public ref class PresEditAddView : public System::Windows::Forms::Form
 	{
 	private:
-		SessionData ^ session; Patient ^ patient;
+		SessionData ^ session; Patient ^ patient; UserData^ UserDB;
+		PresData ^ PresDB; int presID;
 
 	public:
-		PresEditAddView(SessionData ^ s, Patient ^ p)
+		PresEditAddView(SessionData ^ s, Patient ^ p, int pID)
 		{
 			InitializeComponent();
+			PresDB = gcnew PresData();
+			UserDB = gcnew UserData();
+			session = s;
+			patient = p;
+			presID = pID;
+			if(presID)
+				PopulateFields();
+			User^ user = UserDB->get(session->getcurrentUser()->getdoctorId());
+			this->doctor->Text = user->getfirstName()+" "+user->getlastName();
+			this->doctor->ReadOnly=true;
+			checkPermissions();
 			this->Show();
+			
 			//
 			//TODO: Add the constructor code here
 			//
@@ -49,7 +64,7 @@ namespace Pulse {
 		}
 
 	protected: 
-	private: System::Windows::Forms::ComboBox^  comboBox3;
+
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label3;
@@ -57,7 +72,7 @@ namespace Pulse {
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label7;
-	private: System::Windows::Forms::Button^  Back;
+
 	private: System::Windows::Forms::TextBox^  prescription;
 
 	private: System::Windows::Forms::TextBox^  name;
@@ -93,7 +108,6 @@ namespace Pulse {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->comboBox3 = (gcnew System::Windows::Forms::ComboBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
@@ -101,7 +115,6 @@ namespace Pulse {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->label7 = (gcnew System::Windows::Forms::Label());
-			this->Back = (gcnew System::Windows::Forms::Button());
 			this->prescription = (gcnew System::Windows::Forms::TextBox());
 			this->name = (gcnew System::Windows::Forms::TextBox());
 			this->dose = (gcnew System::Windows::Forms::TextBox());
@@ -111,14 +124,6 @@ namespace Pulse {
 			this->comments = (gcnew System::Windows::Forms::TextBox());
 			this->save = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
-			// 
-			// comboBox3
-			// 
-			this->comboBox3->FormattingEnabled = true;
-			this->comboBox3->Location = System::Drawing::Point(284, 130);
-			this->comboBox3->Name = L"comboBox3";
-			this->comboBox3->Size = System::Drawing::Size(121, 21);
-			this->comboBox3->TabIndex = 2;
 			// 
 			// label1
 			// 
@@ -184,16 +189,6 @@ namespace Pulse {
 			this->label7->TabIndex = 9;
 			this->label7->Text = L"Comments";
 			// 
-			// Back
-			// 
-			this->Back->Location = System::Drawing::Point(197, 178);
-			this->Back->Name = L"Back";
-			this->Back->Size = System::Drawing::Size(75, 23);
-			this->Back->TabIndex = 10;
-			this->Back->Text = L"Back";
-			this->Back->UseVisualStyleBackColor = true;
-			this->Back->Click += gcnew System::EventHandler(this, &PresEditAddView::button1_Click);
-			// 
 			// prescription
 			// 
 			this->prescription->Location = System::Drawing::Point(87, 22);
@@ -222,7 +217,7 @@ namespace Pulse {
 			// 
 			this->instructions->Location = System::Drawing::Point(87, 119);
 			this->instructions->Name = L"instructions";
-			this->instructions->Size = System::Drawing::Size(100, 20);
+			this->instructions->Size = System::Drawing::Size(283, 20);
 			this->instructions->TabIndex = 14;
 			this->instructions->TextChanged += gcnew System::EventHandler(this, &PresEditAddView::textBox4_TextChanged);
 			// 
@@ -245,14 +240,16 @@ namespace Pulse {
 			// 
 			this->comments->Location = System::Drawing::Point(87, 217);
 			this->comments->Name = L"comments";
-			this->comments->Size = System::Drawing::Size(100, 20);
+			this->comments->Size = System::Drawing::Size(283, 20);
 			this->comments->TabIndex = 17;
 			// 
 			// save
 			// 
-			this->save->Location = System::Drawing::Point(197, 214);
+			this->save->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->save->Location = System::Drawing::Point(136, 262);
 			this->save->Name = L"save";
-			this->save->Size = System::Drawing::Size(75, 23);
+			this->save->Size = System::Drawing::Size(109, 44);
 			this->save->TabIndex = 18;
 			this->save->Text = L"Save";
 			this->save->UseVisualStyleBackColor = true;
@@ -262,7 +259,7 @@ namespace Pulse {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(284, 262);
+			this->ClientSize = System::Drawing::Size(406, 337);
 			this->Controls->Add(this->save);
 			this->Controls->Add(this->comments);
 			this->Controls->Add(this->doctor);
@@ -271,7 +268,6 @@ namespace Pulse {
 			this->Controls->Add(this->dose);
 			this->Controls->Add(this->name);
 			this->Controls->Add(this->prescription);
-			this->Controls->Add(this->Back);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
@@ -279,7 +275,6 @@ namespace Pulse {
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			this->Controls->Add(this->comboBox3);
 			this->Name = L"PresEditAddView";
 			this->Text = L"Pulse";
 			this->Load += gcnew System::EventHandler(this, &PresEditAddView::PresEditAddView_Load);
@@ -308,23 +303,52 @@ private: System::Void dose_TextChanged(System::Object^  sender, System::EventArg
 private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void save_Click(System::Object^  sender, System::EventArgs^  e) {
-			int temp = 1;
 			String ^ pres1;
 			String ^ pres2;
 			String ^ pres3;
 			String ^ pres4;
 			String ^ pres5;
-			String ^ pres6;
 		    String ^ pres7;
 			pres1 = this->prescription->Text;
 			pres2 = this->name->Text;
 			pres3 = this->dose->Text;
 			pres4 = this->instructions->Text;
 			pres5 = this->refills->Text;
-			pres6 = this->doctor->Text;
 			pres7 = this->comments->Text;
+			if(presID)
+				PresDB->edit(presID, patient->getPatientID(), session->getcurrentUser()->getdoctorId(), pres1, pres2, pres3, pres4, pres5, pres7);
+			else
+				PresDB->add(patient->getPatientID(), session->getcurrentUser()->getdoctorId(), pres1, pres2, pres3, pres4, pres5, pres7);	
+			this->Close();
 		 }
 private: System::Void PresEditAddView_Load(System::Object^  sender, System::EventArgs^  e) {
+		 }
+		 
+		 System::Void checkPermissions(){
+			 if(session->getcurrentUser()->gettype() == "Patient"){
+				NoEdit();
+				this->save->Visible = false;
+			 }
+		 }
+
+		  System::Void NoEdit(){
+			this->prescription->ReadOnly=true;
+			this->name->ReadOnly=true;
+			this->dose->ReadOnly=true;
+			this->instructions->ReadOnly=true;
+			this->refills->ReadOnly=true;
+			this->comments->ReadOnly=true;
+		 }
+
+		 System::Void PopulateFields(){
+			PresDB->get(presID);
+			this->prescription->Text = (String^)(PresDB->myReader["pres_num"]);
+			this->name->Text = (String^)(PresDB->myReader["pres_name"]);
+			this->dose->Text = (String^)(PresDB->myReader["pres_dose"]);
+			this->instructions->Text = (String^)(PresDB->myReader["pres_instructions"]);
+			this->refills->Text = (String^)(PresDB->myReader["pres_refills"]);
+			this->comments->Text = (String^)(PresDB->myReader["pres_comments"]);
+			PresDB->closeConnection();
 		 }
 };
 }

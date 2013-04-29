@@ -164,8 +164,10 @@ namespace Pulse {
 				UserDB->closeConnection();
 			}
 private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-			User ^ tempUser = UserDB->get(this->dataGridView1[0,e->RowIndex]->Value->ToString(), false);
-			AdminUserView ^ adminEditScreen = gcnew AdminUserView(tempUser);
+			if(e->RowIndex >=0){
+				User ^ tempUser = UserDB->get(this->dataGridView1[0,e->RowIndex]->Value->ToString(), false);
+				AdminUserView ^ adminEditScreen = gcnew AdminUserView(tempUser);
+			}
 		 }
 private: System::Void AdminUserListView_Load(System::Object^  sender, System::EventArgs^  e) {
 			 InitializeDataGridView();

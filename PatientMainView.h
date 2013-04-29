@@ -2,6 +2,9 @@
 #include "stdafx.h"
 #include "PresEditAddView.h"
 #include "SessionData.h"
+#include "CommData.h"
+#include "PresData.h"
+#include "StatData.h"
 #include "PtntData.h"
 #include "PatientGraphView.h"
 #include "Patient.h"
@@ -26,6 +29,14 @@ namespace Pulse {
 
 		private:
 		SessionData ^ session; Patient ^ patient; PtntData ^ PtntDB;
+		CommData ^ CommDB; PresData ^ PresDB; StatData ^ StatDB;
+	private: System::Windows::Forms::Button^  button2;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Number;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Name;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  PresID;
+
+
+
 	private: System::Windows::Forms::Label^  label11;
 
 	public:
@@ -35,6 +46,9 @@ namespace Pulse {
 			patient = session->getcurrentPatient();
 			PtntDB = gcnew PtntData();
 			InitializeComponent();
+			StatDB = gcnew StatData();
+			PresDB = gcnew PresData();
+			pullPrescriptions();
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
 			this->Show();
@@ -47,8 +61,13 @@ namespace Pulse {
 		{
 			session = s;
 			patient = p;
-			PtntDB = gcnew PtntData();
 			InitializeComponent();
+			PtntDB = gcnew PtntData();
+			CommDB = gcnew CommData();
+			pullComments();
+			StatDB = gcnew StatData();
+			PresDB = gcnew PresData();
+			pullPrescriptions();
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
 			this->Show();
@@ -125,8 +144,8 @@ namespace Pulse {
 	private: System::Windows::Forms::TextBox^  textBox14;
 	private: System::Windows::Forms::Label^  label25;
 	private: System::Windows::Forms::DataGridView^  dataGridView1;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Number;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Name;
+
+
 
 
 #pragma region Windows Form Designer generated code
@@ -177,9 +196,11 @@ namespace Pulse {
 			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->label20 = (gcnew System::Windows::Forms::Label());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
 			this->Number = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Name = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->PresID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
 			this->commentList = (gcnew System::Windows::Forms::RichTextBox());
 			this->dateTimePicker = (gcnew System::Windows::Forms::DateTimePicker());
@@ -655,6 +676,7 @@ namespace Pulse {
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->button2);
 			this->tabPage3->Controls->Add(this->dataGridView1);
 			this->tabPage3->Location = System::Drawing::Point(4, 25);
 			this->tabPage3->Name = L"tabPage3";
@@ -663,18 +685,31 @@ namespace Pulse {
 			this->tabPage3->Text = L"Prescriptions";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// button2
+			// 
+			this->button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->button2->Location = System::Drawing::Point(175, 320);
+			this->button2->Name = L"button2";
+			this->button2->Size = System::Drawing::Size(181, 36);
+			this->button2->TabIndex = 1;
+			this->button2->Text = L"Add Prescription";
+			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &PatientMainView::button2_Click_1);
+			// 
 			// dataGridView1
 			// 
 			this->dataGridView1->AllowUserToAddRows = false;
 			this->dataGridView1->AllowUserToDeleteRows = false;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(2) {this->Number, 
-				this->Name});
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {this->Number, 
+				this->Name, this->PresID});
 			this->dataGridView1->Location = System::Drawing::Point(10, 23);
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->ReadOnly = true;
-			this->dataGridView1->Size = System::Drawing::Size(510, 339);
+			this->dataGridView1->Size = System::Drawing::Size(510, 291);
 			this->dataGridView1->TabIndex = 0;
+			this->dataGridView1->CellClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &PatientMainView::dataGridView1_CellContentClick);
 			// 
 			// Number
 			// 
@@ -688,6 +723,13 @@ namespace Pulse {
 			this->Name->Name = L"Name";
 			this->Name->ReadOnly = true;
 			this->Name->Width = 350;
+			// 
+			// PresID
+			// 
+			this->PresID->HeaderText = L"PresID";
+			this->PresID->Name = L"PresID";
+			this->PresID->ReadOnly = true;
+			this->PresID->Visible = false;
 			// 
 			// tabPage4
 			// 
@@ -721,6 +763,7 @@ namespace Pulse {
 			this->dateTimePicker->Name = L"dateTimePicker";
 			this->dateTimePicker->Size = System::Drawing::Size(170, 23);
 			this->dateTimePicker->TabIndex = 7;
+			this->dateTimePicker->ValueChanged += gcnew System::EventHandler(this, &PatientMainView::dateTimePicker_ValueChanged);
 			// 
 			// add_btn
 			// 
@@ -730,6 +773,7 @@ namespace Pulse {
 			this->add_btn->TabIndex = 6;
 			this->add_btn->Text = L"Add Comment";
 			this->add_btn->UseVisualStyleBackColor = true;
+			this->add_btn->Click += gcnew System::EventHandler(this, &PatientMainView::add_btn_Click);
 			// 
 			// newComment
 			// 
@@ -783,6 +827,7 @@ namespace Pulse {
 			this->Controls->Add(this->tabControl1);
 			//this->Name = L"PatientMainView";
 			this->Text = L"Patient Information";
+			this->Activated += gcnew System::EventHandler(this, &PatientMainView::PatientMain_Activated);
 			this->Load += gcnew System::EventHandler(this, &PatientMainView::PatientMainView_Load);
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
@@ -815,17 +860,13 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 		 }
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) 
 		 {
-			 PresEditAddView ^ newPres = gcnew PresEditAddView(session, patient);
-			 newPres->Owner = this;
-			 
-			 
 		 }
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
 			 String ^ temp = textBox1->Text; 
 			 temp = textBox2->Text; 
 			 temp = textBox3->Text; 
-			 String ^ tempdate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");;
+			 String ^ tempdate =  dateTimePicker2->Value.ToString("MM/dd/yyyy");
 
 			 //Save everything from the entered fields, into the database for the date specified
 
@@ -844,6 +885,7 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 				tabControl1->TabPages->Remove(tabPage4);
 				this->ControlBox = false;
 				this->button1->Visible = false;
+				this->button2->Visible = false;
 				this->label22->Text = session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 			 } else {
 				 this->label22->Visible = false;
@@ -880,9 +922,64 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 
 		 }
 
+		 System::Void pullComments(){
+			 commentList->Text = "";
+			 CommDB->get(this->dateTimePicker->Value, patient->getPatientID());
+
+			 bool dataLeft = (CommDB->myReader->HasRows ? true : false);
+			 while(dataLeft){
+				commentList->Text += (String^)(CommDB->myReader["comm_text"]);
+				if(!CommDB->myReader->Read())
+					dataLeft = false;
+			 }
+			 CommDB->closeConnection();
+		 }
+
+		 System::Void pullPrescriptions(){
+			 PresDB->getList(patient->getPatientID());
+			 this->dataGridView1->Rows->Clear();
+			 bool dataLeft = PresDB->myReader->HasRows ? true : false;
+			 while(dataLeft){
+				 String^ num = (String^)(PresDB->myReader["pres_num"]);
+				 String^ name = (String^)(PresDB->myReader["pres_name"]);
+				 int presid = (int)(PresDB->myReader["pres_id"]);
+				 this->dataGridView1->Rows->Add(num, name, presid);
+				 if(!PresDB->myReader->Read())
+					 dataLeft = false;
+			 }
+			 PresDB->closeConnection();
+		 }
+
 private: System::Void linkLabel6_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 			this->Owner->Show();
 			this->Close();
+		 }
+private: System::Void add_btn_Click(System::Object^  sender, System::EventArgs^  e) {
+			 if(newComment->Text != "Enter a new comment here"){
+				String ^ addedComment = ""+session->getcurrentUser()->getfirstName() + " " + 
+								session->getcurrentUser()->getlastName() + " :: " + 
+								newComment->Text + "\n\n";
+				CommDB->add(this->dateTimePicker->Value, patient->getPatientID(), addedComment);
+				pullComments();
+				newComment->Text = "";
+			 }
+		 }
+private: System::Void dateTimePicker_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 pullComments();
+		 }
+private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+			 if(e->RowIndex >=0){
+				int pres_id = Convert::ToInt32(this->dataGridView1[2,e->RowIndex]->Value);
+				PresEditAddView ^ pAdd = gcnew PresEditAddView(session, patient, pres_id);
+				pAdd->Owner = this;
+			 }
+		 }
+private: System::Void button2_Click_1(System::Object^  sender, System::EventArgs^  e) {
+			 PresEditAddView ^ pAdd = gcnew PresEditAddView(session, patient, 0);
+			 pAdd->Owner = this;
+		 }
+		 System::Void PatientMain_Activated(System::Object^  sender, System::EventArgs^  e){
+			 pullPrescriptions();
 		 }
 };
 }

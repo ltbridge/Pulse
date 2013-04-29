@@ -11,16 +11,21 @@ CommData::~CommData(void)
 {
 }
 
-void CommData::get(System::DateTime date, int ptnt_ID)
+void CommData::get(System::DateTime^ date, int ptnt_ID)
 {
+	System::String^ querystring = "Select * From Comments ";
+	querystring += "where comm_date ='"+date->ToString("MM/dd/yyyy")+"' AND comm_ptnt_id='"+ptnt_ID+"' ";
+	querystring += "ORDER BY comm_date ASC";
+	query(querystring);
 }
 
-bool CommData::add(System::DateTime date, int ptnt_ID, System::String ^ enteredString)
+bool CommData::add(System::DateTime^ date, int ptnt_ID, System::String ^ enteredString)
 {
-	return false;
-}
-
-bool CommData::remove(int comm_ID)
-{
-	return false;
+	System::String^ querystring = "Insert Into Comments Values (";
+	querystring += ptnt_ID+", ";
+	querystring += "'" +  enteredString + "', ";
+	querystring += "'" + date->ToString("MM/dd/yyyy")+"')";
+	query(querystring);
+	closeConnection();
+	return true;
 }
