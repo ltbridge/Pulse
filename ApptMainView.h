@@ -18,7 +18,8 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for ApptMainView
+	/// Main view for Doctors and Nurses
+	/// Appointments are managed and patients can be searched and added
 	/// </summary>
 	public ref class ApptMainView : public System::Windows::Forms::Form
 	{
@@ -26,12 +27,15 @@ namespace Pulse {
 		ApptMainView(SessionData ^ s)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			
+			//copy session
 			session = s;
+
+			//instantiate database classes
 			apptDB = gcnew ApptData();
 			ptntDB = gcnew PtntData();
+
+			//fill appointments
 			this->pullAppointments(this->dateTimePicker1->Value);
 			this->Show();
 		}
@@ -285,23 +289,30 @@ namespace Pulse {
 #pragma endregion
 	private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
+
+			 //controls clicking the appointment tab
+			 //if a name is on the button, will view the patient
+			 //if the appointment is ope, will open search view
+			 //if clicking on del, will check the appointment is filled, then delete
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-				if(e->RowIndex >=0){
+				//only process if not a header
+				 if(e->RowIndex >=0){
 					 String ^ check;
+					 //if its the appointment/patient column
 					 if(e->ColumnIndex == 1){
 						check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
-						if(check == "OPEN"){
+						if(check == "OPEN"){ //if open, pass the time to search view and open
 							String ^ test = this->dataGridView1[0,e->RowIndex]->Value->ToString();
 							DateTime ^ openTime = gcnew DateTime;
 							openTime = DateTime::Parse(""+this->dateTimePicker1->Value.ToString("MM/dd/yyyy ")+""+this->dataGridView1[0,e->RowIndex]->Value->ToString()+"");
 							PatientSearchView ^ pSearch = gcnew PatientSearchView(session, openTime);
-						} else{
+						} else{ //else its a patient, so set the current patient and go to patient view
 							session->setcurrentPatient(ptntDB->get((int)(this->dataGridView1[3,e->RowIndex]->Value), false));
-							PatientMainView ^ pMain = gcnew PatientMainView(session);
+							PatientMainView ^ pMain = gcnew PatientMainView(session, session->getcurrentPatient());
 						}
-					} else if (e->ColumnIndex == 2) {
+					} else if (e->ColumnIndex == 2) { // else if the del column
 						check = this->dataGridView1[e->ColumnIndex,e->RowIndex]->Value->ToString();
-						if(check == "X"){
+						if(check == "X"){ //only delete if an X is on the button
 							int appt_id = Convert::ToInt32(this->dataGridView1[4,e->RowIndex]->Value);
 							apptDB->remove(appt_id);
 							pullAppointments(this->dateTimePicker1->Value);
@@ -313,58 +324,74 @@ namespace Pulse {
 				 String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 				 this->label2->Text = name;
 			 }
+			 //add patient button
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 				 PatientAddView ^ addP = gcnew PatientAddView(session);
 				 addP->Owner = this;
 			 }
+			 //patient search button
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 				 PatientSearchView ^ searchP = gcnew PatientSearchView(session);
 				 searchP->Owner = this;
 			}
+
 	private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 				this->Owner->Show();
 				this->Close();
 			 }
 
+			 //pulls the apppointments for the specific day
 			 System::Void pullAppointments(DateTime^ chosenDate){
+
+				 //first clear the current rows 
 				 this->dataGridView1->Rows->Clear();
+				 //then open connection and query the database
 				 apptDB->get(chosenDate, session->getcurrentUser()->getdoctorId());
 				 
 				 bool dataLeft;
+				 //if there are results, then the while loop can start knowing that
 				 if(apptDB->myReader->HasRows)
 					 dataLeft = true;
 
+				 //9 appointments from 9am to 5pm
 				 for(int i = 9; i < 18; i++){
+					 //create a datetime for the current day to increment on and set appt times
 					 DateTime^ tempDate = gcnew DateTime(chosenDate->Year, chosenDate->Month, chosenDate->Day, i, 0, 0);
 					 DateTime^ rowDate = gcnew DateTime(1,1,1,0,0,0);
 					 
+					 //there is still data in the reader, assign it to the check
 					 if(dataLeft)
 						rowDate = (DateTime)(apptDB->myReader["appt_date"]);
-					 if(rowDate->Hour == i){
+					 if(rowDate->Hour == i){ // if data in the reader matches the hour, print out filled row and patient info
 						String^ name = (String^)(apptDB->myReader["ptnt_firstName"])+" "+(String^)(apptDB->myReader["ptnt_lastName"]);
 						int ptnt_id = (int)(apptDB->myReader["ptnt_id"]);
 						int appt_id = (int)(apptDB->myReader["appt_id"]);
 						DateTime^ createDate = (DateTime)(apptDB->myReader["appt_date"]);
 						this->dataGridView1->Rows->Add(createDate->ToString("hh:mm tt"), name, "X", ptnt_id, appt_id);
-						if(apptDB->myReader->Read())
-							dataLeft = true;
-						else
+						if(!apptDB->myReader->Read()) //check if there is another record, if not, flag for no more reading
 							dataLeft = false;
-					 } else {
+					 } else { //if data in the reader doesn't match, create an open slot
 						this->dataGridView1->Rows->Add(tempDate->ToString("hh:mm tt"), "OPEN", "", -1);
 					 }
 				 }
+				 //close connection
 				 apptDB->closeConnection();
 			 }
+
+			 //if the datepicker changes, refresh appointments with new date
 private: System::Void dateTimePicker1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			 this->pullAppointments(this->dateTimePicker1->Value);
 		 }
+
+		 //following events are for the date previous and next buttons, increment and decrement the time
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 this->dateTimePicker1->Value = this->dateTimePicker1->Value.AddDays(-1);		 
 		 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
 			 this->dateTimePicker1->Value = this->dateTimePicker1->Value.AddDays(1);
 		 }
+		 //when returning from adding appointments, refresh so multiple people can't be accidentally
+		 //scheduled at the same time
 		 System::Void ApptMainView_Activate(System::Object ^ sender, System::EventArgs ^ e){
 			 this->pullAppointments(this->dateTimePicker1->Value);
 		 }

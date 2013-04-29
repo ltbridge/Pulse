@@ -22,7 +22,11 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for PatientMainView
+	/// Main screen containing tabs and all functionality for the following use cases:
+	/// Comments (restricted to Doctors and Nurses only)
+	/// Prescriptions (editing restricted to Doctors and Nurses only)
+	/// Stats
+	/// Information (editing restricted to Doctors and Nurses only)
 	/// </summary>
 	public ref class PatientMainView : public System::Windows::Forms::Form
 	{
@@ -40,42 +44,58 @@ namespace Pulse {
 	private: System::Windows::Forms::Label^  label11;
 
 	public:
+
+		//two constructors differ based on where the user comes from
+
+		//main view for patients, does not instantiate comments because they can't see it
 		PatientMainView(SessionData ^ s)
 		{
+			InitializeComponent();
+
 			session = s;
 			patient = session->getcurrentPatient();
+
+			//instantiate database classes
 			PtntDB = gcnew PtntData();
-			InitializeComponent();
 			StatDB = gcnew StatData();
-			populateStatFields();
 			PresDB = gcnew PresData();
+
+			//fill datagridviews and forms
+			populateStatFields();
 			pullPrescriptions();
+
+
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
 			this->Show();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
+
+		//view for doctors and nurses coming from elsewhere. the passed in patient
+		//object ensures this form and all owned forms can edit a separate patient
+		//from other opened instances of this form
 		PatientMainView(SessionData ^ s, Patient ^ p)
 		{
+			InitializeComponent();
+
 			session = s;
 			patient = p;
-			InitializeComponent();
+			
+			//instantiate database classes
 			PtntDB = gcnew PtntData();
-			CommDB = gcnew CommData();
-			pullComments();
+			CommDB = gcnew CommData();		
 			StatDB = gcnew StatData();
-			populateStatFields();
 			PresDB = gcnew PresData();
+
+			//fill fields and forms
+			populateStatFields();
+			pullComments();
 			pullPrescriptions();
+
+
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			CheckPermissions();
 			this->Show();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
 	protected:
@@ -847,13 +867,13 @@ namespace Pulse {
 #pragma endregion
 	
 	
-
+		//update information, button is hidden from patients
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
 			 PtntDB->update(patient->getPatientID(), this->textBox1->Text, this->textBox2->Text, this->textBox4->Text,
 							this->textBox5->Text, this->textBox6->Text, Convert::ToInt32(this->textBox7->Text), this->textBox3->Text, 
 							this->textBox14->Text, this->textBox8->Text, this->textBox9->Text);
-			 this->label11->Visible = true;
+			 this->label11->Visible = true; //tell user their save was successful
 		 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
@@ -864,6 +884,8 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) 
 		 {
 		 }
+
+		 //add all stat fields to the database for the selected time
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
 			 String ^ sugar = textBox10->Text; 
@@ -872,6 +894,7 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 			 String ^ weight = textBox12->Text; 
 			 DateTime ^ tempdate =  dateTimePicker2->Value;
 
+			 //do not add fields if they are blank
 			 if(sugar != "")
 				 StatDB->add("sugar", tempdate, Convert::ToInt32(sugar), patient->getPatientID());
 			 if(systolic != "")
@@ -882,6 +905,7 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 				 StatDB->add("weight", tempdate, Convert::ToInt32(weight), patient->getPatientID());
 
 		 }
+		 //display graph view
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
 			 PatientGraphView ^ newGraph = gcnew PatientGraphView(session, patient);
@@ -890,22 +914,28 @@ private: System::Void button4_Click(System::Object^  sender, System::EventArgs^ 
 private: System::Void PatientMainView_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 
+		 //check permissions and hide buttons from patients, and make certain fields uneditable
 		 System::Void CheckPermissions(){
 			 if(session->getcurrentUser()->gettype() == "Patient"){
-				NoEdit();
-				tabControl1->TabPages->Remove(tabPage4);
-				this->ControlBox = false;
-				this->button1->Visible = false;
+				NoEdit(); //fields uneditable
+				tabControl1->TabPages->Remove(tabPage4); //remove comment tab
+				this->ControlBox = false; //since this is the main screen for patients, create logout link
+				this->button1->Visible = false; //hide other buttons
 				this->button2->Visible = false;
+				//personalized welcome message
 				this->label22->Text = session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 			 } else {
+				 //hide all personalized information and logout button
 				 this->label22->Visible = false;
 				 this->label23->Visible = false;
 				 this->linkLabel6->Visible = false;
 			 }
+			 //populate information fields
 			 PopulateFields();
 		 }
 
+		 //make information fields uneditable
+		 //used for patient authority level
 		 System::Void NoEdit(){
 			this->textBox1->ReadOnly = true;
 			this->textBox2->ReadOnly = true;
@@ -919,6 +949,7 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			this->textBox14->ReadOnly = true;
 		 }
 
+		 //fill fields according to patient class assigned to this form
 		 System::Void PopulateFields(){
 			 this->textBox1->Text = patient->getFirst();
 			 this->textBox2->Text = patient->getLast();
@@ -933,10 +964,14 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 
 		 }
 
+		 //pulls all comments for a patient for the selected day
+		 //used on load and after a comment has been added
 		 System::Void pullComments(){
+			 //clear comments first
 			 commentList->Text = "";
 			 CommDB->get(this->dateTimePicker->Value, patient->getPatientID());
 
+			 //standard loop through reader data loop
 			 bool dataLeft = (CommDB->myReader->HasRows ? true : false);
 			 while(dataLeft){
 				commentList->Text += (String^)(CommDB->myReader["comm_text"]);
@@ -946,6 +981,7 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 CommDB->closeConnection();
 		 }
 
+		 //pull all prescriptions for a patient
 		 System::Void pullPrescriptions(){
 			 PresDB->getList(patient->getPatientID());
 			 this->dataGridView1->Rows->Clear();
@@ -961,25 +997,28 @@ private: System::Void PatientMainView_Load(System::Object^  sender, System::Even
 			 PresDB->closeConnection();
 		 }
 
+		 //logout button
 private: System::Void linkLabel6_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 			this->Owner->Show();
 			this->Close();
 		 }
+		 //add a new comment, specifically prevent accidental adding of default message
 private: System::Void add_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 			 if(newComment->Text != "Enter a new comment here"){
 				String ^ addedComment = ""+session->getcurrentUser()->getfirstName() + " " + 
 								session->getcurrentUser()->getlastName() + " :: " + 
 								newComment->Text + "\n\n";
 				CommDB->add(this->dateTimePicker->Value, patient->getPatientID(), addedComment);
-				pullComments();
+				pullComments(); //refresh comments after insertion into database
 				newComment->Text = "";
 			 }
 		 }
 private: System::Void dateTimePicker_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
-			 pullComments();
+			 pullComments(); //on date change, refresh comments
 		 }
+		 //if clicking on a prescription, pull up information
 private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-			 if(e->RowIndex >=0){
+			 if(e->RowIndex >=0){ //only works if clicking on a non-header row
 				int pres_id = Convert::ToInt32(this->dataGridView1[2,e->RowIndex]->Value);
 				PresEditAddView ^ pAdd = gcnew PresEditAddView(session, patient, pres_id);
 				pAdd->Owner = this;
@@ -990,14 +1029,17 @@ private: System::Void button2_Click_1(System::Object^  sender, System::EventArgs
 			 pAdd->Owner = this;
 		 }
 		 System::Void PatientMain_Activated(System::Object^  sender, System::EventArgs^  e){
-			 pullPrescriptions();
+			 pullPrescriptions(); //refresh prescriptions after adding one
 		 }
 private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
-			populateStatFields();
+			populateStatFields(); //refresh stats after changing the date
 		 }
+
+		 //fill the stat fields according to currently selected day
 		 System::Void populateStatFields(){
 			 StatDB->get(this->dateTimePicker2->Value, patient->getPatientID());
 
+			 //array for looping
 			 array<String^>^ types = gcnew array<String^>(4);
 			 types[0] = "diastolic";
 			 types[1] = "sugar";
@@ -1007,6 +1049,7 @@ private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, Syst
 			 String^ statdata;
 			 String^ stattype;
 
+			 //loop through database data, only fill fields that have been entered
 			 bool dataLeft = StatDB->myReader->HasRows ? true : false;
 			 for(int i = 0; i < 4; i++){
 				 stattype = types[i];

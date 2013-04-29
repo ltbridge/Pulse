@@ -19,7 +19,7 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for PatientAddView
+	/// Form to add or edit a patient's information
 	/// </summary>
 	public ref class PatientAddView : public System::Windows::Forms::Form
 	{
@@ -30,13 +30,13 @@ namespace Pulse {
 			PatientAddView(SessionData^ s)
 			{
 				InitializeComponent();
-				//
-				//TODO: Add the constructor code here
-				//
+				
+				session = s;
+
+				//instantiate database classes
 				PtntDB = gcnew PtntData();
 				UserDB = gcnew UserData();
 				this->Show();
-				session = s;
 			}
 
 		protected:
@@ -454,18 +454,19 @@ namespace Pulse {
 
 		}
 #pragma endregion
-
+			
 	private: System::Void PatientAddView_Load(System::Object^  sender, System::EventArgs^  e) {
 				String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 				this->label2->Text = name;
 			}
+			 //save patient information
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
-				if(this->textBox2->Text != this->textBox3->Text){
+				if(this->textBox2->Text != this->textBox3->Text){ //error if passwords dont matcht
 					this->label17->Visible = true;
-				} else if (UserDB->nameExists(this->textBox1->Text)){
+				} else if (UserDB->nameExists(this->textBox1->Text)){ //error if username already exists
 					this->label18->Visible = true;
-				} else {
+				} else { //no errors then add to database
 					User ^ user = UserDB->add(this->firstBox->Text, this->lastBox->Text, session->getcurrentUser()->getdoctorId(), 
 												"Patient", this->textBox1->Text, this->textBox2->Text);
 					Patient ^ patient = gcnew Patient(-1, this->firstBox->Text, this->lastBox->Text, this->addressBox->Text,
@@ -483,6 +484,7 @@ namespace Pulse {
 			 {
 				 Close(); //or hide
 			 }
+			 //if passwords or username changed, remove any associated errors
 	private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 				this->label17->Visible = false;
 			 }

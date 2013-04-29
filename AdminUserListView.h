@@ -13,7 +13,8 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for AdminUserListView
+	/// Shows a sortable list of every user in the system
+	/// clicking on the user will open an editable view
 	/// </summary>
 	public ref class AdminUserListView : public System::Windows::Forms::Form
 	{
@@ -29,11 +30,16 @@ namespace Pulse {
 	public:
 		AdminUserListView(SessionData ^ s)
 		{
-			session=s;
-			UserDB = gcnew UserData();
 			InitializeComponent();
-			this->Show();
+
+			session=s;
+			//instantiate database class
+			UserDB = gcnew UserData();
+
+			//populate list
 			InitializeDataGridView();
+			this->Show();
+			
 		}
 
 
@@ -132,13 +138,14 @@ namespace Pulse {
 
 		}
 #pragma endregion
+			//pull all the users in the system and print them out as rows in the datagridview
 	private: System::Void InitializeDataGridView()
 			{
-				dataGridView1->Rows->Clear();
+				dataGridView1->Rows->Clear(); //clear in case of refreshing
 				UserDB->userList(0);
 				bool dataLeft = true;
-				if(UserDB->myReader->HasRows){
-					 while(dataLeft){
+				if(UserDB->myReader->HasRows){//if there are users, continue
+					 while(dataLeft){//while there is data left, create a row
 						 String ^ atype;
 						int typeNum = (int)(UserDB->myReader["user_type"]);
 						switch(typeNum){
@@ -157,18 +164,20 @@ namespace Pulse {
 								break;
 						}
 						dataGridView1->Rows->Add((String^)(UserDB->myReader["user_name"]),(String^)(UserDB->myReader["user_firstName"]),(String^)(UserDB->myReader["user_lastName"]), atype);
-						if(!UserDB->myReader->Read())
+						if(!UserDB->myReader->Read()) //try and read the next row, if failed, flag we are done
 							dataLeft = false;
 					 }
 				 }
 				UserDB->closeConnection();
 			}
+			 //onclick event handler for cells, brings up user edit screen
 private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 			if(e->RowIndex >=0){
 				User ^ tempUser = UserDB->get(this->dataGridView1[0,e->RowIndex]->Value->ToString(), false);
 				AdminUserView ^ adminEditScreen = gcnew AdminUserView(tempUser);
 			}
 		 }
+		 //when the screen is made active, refresh in the case of user changes
 private: System::Void AdminUserListView_Load(System::Object^  sender, System::EventArgs^  e) {
 			 InitializeDataGridView();
 		 }

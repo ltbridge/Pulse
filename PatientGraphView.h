@@ -13,7 +13,7 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for PatientGraphView
+	/// Graph view for visualizing patient stat progress
 	/// </summary>
 	public ref class PatientGraphView : public System::Windows::Forms::Form
 	{
@@ -23,19 +23,23 @@ namespace Pulse {
 		public:
 			PatientGraphView(SessionData ^ s, Patient ^ p)
 			{
+				InitializeComponent();
+
 				session = s;
 				patient = p;
-				InitializeComponent();
+				
+				//initialize database class
 				StatDB = gcnew StatData();
+
+				//weight always start selected
 				this->comboBox1->SelectedIndex = 0;
 				this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+				
+				//draw graph and write labels
 				updateLabels();
 				 updateAxis();
 				 drawChart();
 				this->Show();
-				//
-				//TODO: Add the constructor code here
-				//
 			}
 
 		protected:
@@ -195,6 +199,9 @@ namespace Pulse {
 			}
 	#pragma endregion
 
+			//main draw chart function
+			//gets series from database based on currently selected option
+			//then assigns points to the chart
 	private:System::Void drawChart(){
 				 int index = this->comboBox1->SelectedIndex;
 				 switch (index){
@@ -216,13 +223,15 @@ namespace Pulse {
 				 }
 			 }
 
+			//assigning points to the chart
 			 System::Void AssignPoints(int seriesnum){
+				 //determine length of xAxis = days in the month
 				int xAxis = System::DateTime::DaysInMonth(this->dateTimePicker1->Value.Year, this->dateTimePicker1->Value.Month);
-				int steadyline = 0;
+				int steadyline = 0; //int to make straight lines between points
 				DateTime ^ thisday = System::DateTime::Today;
 				bool dataLeft = StatDB->myReader->HasRows ? true : false;
 				bool pointset = false;
-				for(int i = 1; i <= xAxis; i++){
+				for(int i = 1; i <= xAxis; i++){//for each x point, either print out data or holding pattern data
 					if(dataLeft){
 						DateTime ^ dbDate = (DateTime^)(StatDB->myReader["stat_date"]);
 						if(dbDate->Day == i){
@@ -239,7 +248,7 @@ namespace Pulse {
 					}
 				}
 			 }
-
+			 //update labels based on currently selected data
 			 System::Void updateLabels(){
 				if(comboBox1->SelectedIndex == 0)
 				 {
@@ -277,11 +286,14 @@ namespace Pulse {
 				 }
 			 }
 
+			 //create x-axis lables and intervals
 			 System::Void updateAxis(){
 				this->chart2->ChartAreas["ChartArea1"]->AxisX->Interval = 7;
 				this->chart2->ChartAreas["ChartArea1"]->AxisX->Title = "Day of the Month";
 				//this->chart2->ChartAreas["ChartArea1"]->AxisX->IntervalType = System::Windows::Forms::DataVisualization::Charting::DateTimeIntervalType::Days;
 			 }
+
+			 //when date is changed, update graph
 			System::Void dateTimePicker1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 				 updateLabels();
 				 updateAxis();
@@ -289,19 +301,20 @@ namespace Pulse {
 			 }
 	private: System::Void dateTimePicker2_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
-
+			 //when type is changed, update graph
 	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) 
 			 {
 				 updateLabels();
 				 updateAxis();
 				 drawChart();
 			 }
+			 //button to add a temporary goal
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
 				 String ^ temp = textBox1->Text;
 				 int goal= 0;
 				 if(temp != "")
-					goal = int::Parse(temp);
+					goal = Convert::ToInt32(temp);
 				 int xAxis = System::DateTime::DaysInMonth(this->dateTimePicker1->Value.Year, this->dateTimePicker1->Value.Month);
 				 if(goal != 0)
 				 {

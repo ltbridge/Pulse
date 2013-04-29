@@ -12,7 +12,9 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for PulseMain
+	/// Base class for the program that starts the session
+	/// Main purpose is to be an owner to all forms and sit behind them allowing
+	/// the user to minimize or close all forms simultaneously
 	/// </summary>
 	public ref class PulseMain : public System::Windows::Forms::Form
 	{
@@ -71,12 +73,15 @@ namespace Pulse {
 		}
 #pragma endregion
 	private: 
+		//on load this form calls the login screen
 		System::Void PulseMain_Load(System::Object^  sender, System::EventArgs^  e) {
 			LoginView ^ login = gcnew LoginView(session);
 			login->Owner = this;
 		}
 
 	public:
+		//depreciated function
+		//no longer in use in favor of removing close buttons from main screen
 		System::Void logout() {
 			session = gcnew SessionData();
 			LoginView ^ login = gcnew LoginView(session);

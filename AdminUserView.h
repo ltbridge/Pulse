@@ -13,7 +13,8 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for AdminUserView
+	/// View to allow editing and adding of users
+	/// simple form adds and updates to the database
 	/// </summary>
 	public ref class AdminUserView : public System::Windows::Forms::Form
 	{
@@ -24,18 +25,25 @@ namespace Pulse {
 	public:
 		AdminUserView(User^ u)
 		{
-			user = u;
-			UserDB = gcnew UserData();
+
 			InitializeComponent();
+			user = u;
+
+			//instantiation of database classes
+			UserDB = gcnew UserData();
+
+			//create list of assignable doctors
 			comboBox2List();
+
+			//create array of authority level for user in dropdown box
 			authority = gcnew array<String^>(4);
 			authority[0] = "Admin";
 			authority[1] = "Doctor";
 			authority[2] = "Nurse";
 			authority[3] = "Patient";
-			if(user == nullptr){
+			if(user == nullptr){ //if we aren't editing a user, then we are adding
 				this->label7->Text = "Add User";
-			} else {
+			} else { //if we aren't adding, we are editing, so populate fields
 				PopulateFields();
 			}
 			this->Show();
@@ -258,31 +266,34 @@ namespace Pulse {
 
 		}
 #pragma endregion
+		//button to save the user, validation checks are done in this method
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 String^ name = textBox1->Text ; 
 			 String^ password = textBox2->Text;
 			 String^ fname = textBox4->Text;
 			 String^ lname = textBox3->Text;
 			 int atype = 1+comboBox1->SelectedIndex;
-			 if(user == nullptr && UserDB->nameExists(name)){
+			 if(user == nullptr && UserDB->nameExists(name)){ //username can't be blank and it can't already exist
 				 label8->Text = "UserName already exists.";
 				 label8->Visible = true;
-			 }else if(name == "" || password == "" || fname == "" || lname == "" || comboBox1->SelectedIndex < 0 || comboBox2->SelectedIndex < 0){
+			 }
+			 //all fields are required, they can not be blank
+			 else if(name == "" || password == "" || fname == "" || lname == "" || comboBox1->SelectedIndex < 0 || comboBox2->SelectedIndex < 0){
 				label8->Visible = true;
 				label8->Text = "All Fields are required";
-			 }else{
+			 }else{ //if passed all fail scenarios, add user
 				 int docid;
-				 if(comboBox2->SelectedIndex > 0){
+				 if(comboBox2->SelectedIndex > 0){ //parse combo box selection
 					User ^ doc = UserDB->get(docs[comboBox2->SelectedIndex], true);
 					 docid= doc->getuserId();
-				 } else {
+				 } else { //if none, docid = 0
 					 docid = 0;
 				 }
 				 int forgot = 0;
-				 if(user == nullptr){
+				 if(user == nullptr){ //if no user assigned to form, then adding
 					UserDB->add(name, password, docid, forgot, atype, fname, lname);
 					this->Close();
-				 } else {
+				 } else { //else updating
 					 UserDB->update(user->getuserId(), name, password, docid, forgot, atype, fname, lname);
 					 this->Close();
 				 }
@@ -291,15 +302,16 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 			 
 		 }
 
+		 //populate dynamic doctor listbox
 		 System::Void comboBox2List(){
 			 
-			 UserDB->userList(2);
+			 UserDB->userList(2);//gets list of doctors
 			 this->docs = gcnew array<String^>(250);
 			 comboBox2->Items->Add("None");
 			 docs[0] = "None";
 			 bool dataLeft = true;
 			 int i = 1;
-			 if(UserDB->myReader->HasRows){
+			 if(UserDB->myReader->HasRows){ //iterate through list and assign them to the dropdown menu as well as the translation array
 					while(dataLeft){
 					comboBox2->Items->Add((String^)(UserDB->myReader["user_firstName"])+" "+(String^)(UserDB->myReader["user_lastName"]));
 					docs[i] = (String^)(UserDB->myReader["user_firstName"])+" "+(String^)(UserDB->myReader["user_lastName"]);
@@ -310,18 +322,20 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 					
 				}
 			 UserDB->closeConnection();
+			 //set default selections
 			 this->comboBox2->SelectedIndex = 0;
 			 this->comboBox1->SelectedIndex = 0;
 
 		 }
 
+		 //populate user fields
 		 System::Void PopulateFields(){
 			 textBox1->Text = user->getuserName();
 			 textBox2->Text = user->getpassword();
 			 textBox3->Text = user->getlastName();
 			 textBox4->Text = user->getfirstName();
-			 for(int i = 0; i < 4; i++){
-				if(user->gettype() == authority[i])
+			 for(int i = 0; i < 4; i++){ //loop through and determine authority level
+				if(user->gettype() == authority[i]) // translation necessary since authority level is a string, selectedindex is an int
 					comboBox1->SelectedIndex = i;
 			 }
 			 comboBox1->SelectedText = user->gettype();

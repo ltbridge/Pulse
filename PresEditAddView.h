@@ -19,7 +19,7 @@ namespace Pulse {
 
 
 	/// <summary>
-	/// Summary for Form1
+	/// Main form for editing and adding prescriptions
 	/// </summary>
 	public ref class PresEditAddView : public System::Windows::Forms::Form
 	{
@@ -31,16 +31,26 @@ namespace Pulse {
 		PresEditAddView(SessionData ^ s, Patient ^ p, int pID)
 		{
 			InitializeComponent();
+
+			//instantiate database classes
 			PresDB = gcnew PresData();
 			UserDB = gcnew UserData();
+
+			//assign needed parameters
 			session = s;
 			patient = p;
 			presID = pID;
+
+			//if we are working on editing a prescription, fill the fields
 			if(presID)
 				PopulateFields();
+
+			//fill the doctor field regardless, because nurses can only have one doctor
 			User^ user = UserDB->get(session->getcurrentUser()->getdoctorId());
 			this->doctor->Text = user->getfirstName()+" "+user->getlastName();
 			this->doctor->ReadOnly=true;
+
+			//check permissions
 			checkPermissions();
 			this->Show();
 			
@@ -302,6 +312,7 @@ private: System::Void dose_TextChanged(System::Object^  sender, System::EventArg
 		 }
 private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
+		 //saves prescription to the database
 private: System::Void save_Click(System::Object^  sender, System::EventArgs^  e) {
 			String ^ pres1;
 			String ^ pres2;
@@ -315,22 +326,24 @@ private: System::Void save_Click(System::Object^  sender, System::EventArgs^  e)
 			pres4 = this->instructions->Text;
 			pres5 = this->refills->Text;
 			pres7 = this->comments->Text;
-			if(presID)
+			if(presID) //if we are editing, we will update
 				PresDB->edit(presID, patient->getPatientID(), session->getcurrentUser()->getdoctorId(), pres1, pres2, pres3, pres4, pres5, pres7);
-			else
+			else // else we will be adding a new prescription
 				PresDB->add(patient->getPatientID(), session->getcurrentUser()->getdoctorId(), pres1, pres2, pres3, pres4, pres5, pres7);	
 			this->Close();
 		 }
+
 private: System::Void PresEditAddView_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 		 
+		 //permission check to restrict patients, they should only be able to view
 		 System::Void checkPermissions(){
 			 if(session->getcurrentUser()->gettype() == "Patient"){
 				NoEdit();
 				this->save->Visible = false;
 			 }
 		 }
-
+		 //makes all fields uneditable
 		  System::Void NoEdit(){
 			this->prescription->ReadOnly=true;
 			this->name->ReadOnly=true;
@@ -339,7 +352,7 @@ private: System::Void PresEditAddView_Load(System::Object^  sender, System::Even
 			this->refills->ReadOnly=true;
 			this->comments->ReadOnly=true;
 		 }
-
+		  //fills the fields if we are editing a prescription
 		 System::Void PopulateFields(){
 			PresDB->get(presID);
 			this->prescription->Text = (String^)(PresDB->myReader["pres_num"]);

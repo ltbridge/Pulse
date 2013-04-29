@@ -17,7 +17,12 @@ namespace Pulse {
 	using namespace std;
 
 	/// <summary>
-	/// Summary for Form1
+	/// Main hub for the three main views based on user, and creates user for session
+	/// After login the following authority levels will redirect to the listed form
+	/// Admin : AdminMainView
+	/// Doctor & Nurse : ApptMainView
+	/// Patient : PatientMainView
+	///
 	/// </summary>
 	public ref class LoginView : public System::Windows::Forms::Form {
 	
@@ -25,9 +30,8 @@ namespace Pulse {
 		LoginView(SessionData^ s)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			
+			//instantiate database classes to be used
 			UserDB = gcnew UserData();
 			PtntDB = gcnew PtntData();
 			this->Show();
@@ -176,6 +180,9 @@ namespace Pulse {
 		/////////////////////////////
 		System::Void LoginView_Load(System::Object^  sender, System::EventArgs^  e) {
 		}
+
+		//login button and pressing enter submits the attempt to login
+		//calls submitLogin();
 		System::Void login_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 				submitLogin();
 		 }
@@ -183,6 +190,8 @@ namespace Pulse {
 			if (e->KeyCode == Keys::Enter)
 				submitLogin();
 		 }
+		//if a username is in the field, will flag the user as forgotten their password
+		//else prompts the user to fill in the username field
 		System::Void FpwLink_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 			this->login_message->Visible = true;
 			if(username_tb->Text == ""){
@@ -197,6 +206,10 @@ namespace Pulse {
 		/////////////////////////////
 		System::Void submitLogin(){
 			this->login_message->Visible = true;
+
+			//checks if username and password are valid
+			//if they are, creates session and redirects
+			//if not, show error message
 			if(UserDB->validLogin(username_tb->Text, pw_tb->Text)){
 					CreateSession(username_tb->Text, pw_tb->Text);
 					RedirectMain();
@@ -204,6 +217,9 @@ namespace Pulse {
 					this->login_message->Text = "Invalid username or password.";
 			}
 		}
+
+		//creates session by assigning user and patient (if user is a patient, since they will never
+		//need to see other patient views)
 		System::Void CreateSession(System::String^ userN, System::String^ passW){
 			AssignUser(userN, passW);
 			if(session->getcurrentUser()->gettype() == "Patient")
@@ -218,6 +234,8 @@ namespace Pulse {
 			User^ tempUser = UserDB->get(username_tb->Text, pw_tb->Text);
 			session->setcurrentUser(tempUser);
 		}
+
+		//main redirect function based on authority level
 		System::Void RedirectMain(){
 			this->pw_tb->Text = "";
 			this->username_tb->Text = "";

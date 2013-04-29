@@ -15,7 +15,9 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for PatientSearchView
+	/// Form for searching patients
+	/// both appointments and patient search use this form
+	/// each have their own constructor
 	/// </summary>
 	public ref class PatientSearchView : public System::Windows::Forms::Form
 	{
@@ -25,27 +27,31 @@ namespace Pulse {
 	private: System::Windows::Forms::Label^  label8;
 
 	public:
+
+		//constructor for patient search
 		PatientSearchView(SessionData ^ s)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			
+			session = s;
+
+			//instantiate database classes
 			ptntDB = gcnew PtntData();
 			apptDB = gcnew ApptData();
 			this->Show();
-			session = s;
+			
 		}
 
+		//constructor for appointment creation, DateTime d determines the appointment time
+		//the patient will be assigned to after selected
 		PatientSearchView(SessionData ^ s, DateTime ^ d)
 		{
 			
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+
 			date = d;
 			session = s;
+			//instantiate database classes
 			ptntDB = gcnew PtntData();
 			apptDB = gcnew ApptData();
 			this->Show();
@@ -327,13 +333,17 @@ namespace Pulse {
 
 		}
 #pragma endregion
-
+		//search button click to hit the database and fill the rows
 private: System::Void searchButton_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
+			 //makes the error message go away, because once here, no errors possible
 			 this->label8->Visible = false;
+			 
+			 //sets parameters to blank
 			 String ^ first = "", ^ last = "", ^ phone = "";
 			 int id = 0;;
 
+			 //goes through each field and if blank, doesn't assign the Text value
 			 if(this->textBox1->Text != "")
 				 first = (String ^)(this->textBox1->Text);
 			 if(this->textBox2->Text != "")
@@ -342,20 +352,24 @@ private: System::Void searchButton_Click(System::Object^  sender, System::EventA
 				 phone = (String ^)(this->textBox3->Text);
 			 if(this->textBox4->Text != "")
 				 id = Convert::ToInt32(this->textBox4->Text);
+			 //search database
 			 ptntDB->search(first, last, phone, id, this->session->getcurrentUser()->getdoctorId());
-			 fillResult();
+			 fillResult(); //fill rows
 		 }
 private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
+		 //clicking a cell either pulls up their information or adds it to the appointment
+		 //flag is hidden in the table on row creation
 private: System::Void dataGridView1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 			if(e->RowIndex >=0 ){
 				String ^ check = this->dataGridView1[4,e->RowIndex]->Value->ToString();
-				if(check == "appt"){
+				if(check == "appt"){//flag to determine if adding to appointment
+					//adds the appointment and if successful, closes
 					if(apptDB->add(date, this->session->getcurrentUser()->getdoctorId(), Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value))){
 						this->Close();
-					}else
+					}else //else tells the user adding didn't work
 						this->label8->Visible = true;
-				} else {
+				} else { //if not flagged to add appointment, views user
 					Patient ^ patient = ptntDB->get(Convert::ToInt32(this->dataGridView1[0,e->RowIndex]->Value), false);
 					PatientMainView ^ pMain = gcnew PatientMainView(session, patient);
 					pMain->Owner = this->Owner;
@@ -363,13 +377,15 @@ private: System::Void dataGridView1_CellClick(System::Object^  sender, System::W
 			}
 		 
 		 }
+		 //function to fill the rows
 private: System::Void fillResult() {
+			 //first clear the rows
 			 this->dataGridView1->Rows->Clear();
 
-			 bool dataLeft;
+			 bool dataLeft; //flag to determine if data is left 
 			 if(ptntDB->myReader->HasRows)
 				 dataLeft = true;
-			 while(dataLeft){
+			 while(dataLeft){//while there is data left, make rows
 				int id = (int)(ptntDB->myReader["ptnt_id"]);
 				String ^ first = (String ^)(ptntDB->myReader["ptnt_firstName"]);
 				String ^ last = (String ^)(ptntDB->myReader["ptnt_lastName"]);
@@ -377,7 +393,7 @@ private: System::Void fillResult() {
 				String ^ type = this->date == nullptr ? "view" : "appt";
 				String ^ datetime = this->date == nullptr ? "" : this->date->ToString();
 				this->dataGridView1->Rows->Add(id, first, last, phone, type, datetime);
-				if(!ptntDB->myReader->Read())
+				if(!ptntDB->myReader->Read()) //if no data left, flag it
 					dataLeft = false;
 			 }
 		 }

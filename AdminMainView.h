@@ -15,21 +15,28 @@ namespace Pulse {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for AdminMainView
+	/// Main view for admins
+	/// Shows the list of users who have forgotten their passwords and allows
+	/// for navigation to searching and adding of users
 	/// </summary>
 	public ref class AdminMainView : public System::Windows::Forms::Form
 	{
 	private: SessionData ^ session; UserData ^ UserDB;
 	public:
 		AdminMainView(SessionData ^ s)
-		{
-			UserDB = gcnew UserData();
-			session=s;
+		{	
 			InitializeComponent();
+			session=s;
+			//instantiate database classes
+			UserDB = gcnew UserData();
+			
+			//create list of forgot password users
 			populateList();
+			
+			//personalize welcome screen
 			String ^ name = ""+session->getcurrentUser()->getfirstName()+" "+session->getcurrentUser()->getlastName();
 			this->label1->Text = name;
-			this->ControlBox = false;
+			this->ControlBox = false; //hide exit capabilities
 			this->Show();
 		}
 
@@ -185,17 +192,20 @@ namespace Pulse {
 
 		}
 #pragma endregion
-
+		
+		//add user button navigates to add user screen
 private: System::Void addButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			User ^ user;
 			AdminUserView ^ adminAddScreen = gcnew AdminUserView(user);
 			adminAddScreen->Owner = this;
 
 		 }
+		 //logout link
 private: System::Void linkLabel1_LinkClicked(System::Object^  sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^  e) {
 			this->Owner->Show();
 			this->Close();
 		 }
+		 //remove the forgotten password flag from a user
 private: System::Void removeButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 if (listBox1->SelectedIndex!=-1){
 				 UserDB->removeforgotPass(listBox1->SelectedItem->ToString());
@@ -203,12 +213,14 @@ private: System::Void removeButton_Click(System::Object^  sender, System::EventA
 			 }
 		 }
 
+		 //view the list of all users
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			AdminUserListView ^ adminViewScreen = gcnew AdminUserListView(session);
-
+			adminViewScreen->Owner = this;
 		 }
+		 //populate forgotten password list
 		 System::Void populateList(){
-			 listBox1->Items->Clear();
+			 listBox1->Items->Clear();//clear list for refresh
 			 UserDB->forgotPassList();
 			 bool dataLeft = true;
 			 if(UserDB->myReader->HasRows){
@@ -220,6 +232,7 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 			 }
 			 UserDB->closeConnection();
 		 }
+		 //when clicking on a user in the list, show their editing screen
 private: System::Void listBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			 User ^ user = UserDB->get(listBox1->SelectedItem->ToString(), false);
 			 AdminUserView ^ adminAddScreen = gcnew AdminUserView(user);
